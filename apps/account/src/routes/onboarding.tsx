@@ -5,8 +5,11 @@ import { Button } from '@/components/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/card'
 import { Progress } from '@/components/progress'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { useCreateMyPerson } from '@monobase/sdk/react/hooks/use-person'
-import { queryKeys } from '@monobase/sdk/react/query-keys'
+import { useMutation } from '@tanstack/react-query'
+import {
+  createPersonMutation,
+  getPersonQueryKey,
+} from '@monobase/sdk/generated/@tanstack/react-query.gen'
 import { Logo } from '@/components/logo'
 import { composeGuards, requireAuth, requireEmailVerified, requireNoPerson } from '@/utils/guards'
 import { detectTimezone } from '@/lib/detect-timezone'
@@ -15,7 +18,7 @@ import { detectLanguage } from '@/lib/detect-language'
 import { PersonalInfoForm } from '@/features/person/components/personal-info-form'
 import { AddressForm } from '@/features/person/components/address-form'
 import type { PersonalInfo, OptionalAddress } from '@/features/person/schemas'
-import type { CreatePersonData } from '@monobase/sdk/services/person'
+import type { PersonCreateRequest } from '@monobase/sdk/generated/types.gen'
 
 export const Route = createFileRoute('/onboarding')({
   beforeLoad: composeGuards(requireAuth, requireEmailVerified, requireNoPerson),
@@ -31,7 +34,16 @@ function OnboardingPage() {
   const { auth } = Route.useRouteContext()
   const user = auth.user!
   const [currentStep, setCurrentStep] = useState(1)
-  const createPersonMutation = useCreateMyPerson()
+  const createPerson = useMutation({
+    ...createPersonMutation(),
+    meta: {
+      toast: {
+        success: 'Profile created!',
+        error: (err: unknown) =>
+          err instanceof Error ? err.message : 'Failed to create profile',
+      },
+    },
+  })
 
   // Store form data across steps with proper types
   // Initialize with empty/detected values
@@ -91,7 +103,7 @@ function OnboardingPage() {
     }
 
     // Build address if provided
-    let primaryAddress: CreatePersonData['primaryAddress'] | undefined
+    let primaryAddress: PersonCreateRequest['primaryAddress'] | undefined
     if (data && data.street1 && data.city &&
         data.state && data.postalCode && data.country) {
       primaryAddress = {
@@ -105,33 +117,28 @@ function OnboardingPage() {
     }
 
     const personal = formData.personal as PersonalInfo
-    const personData: CreatePersonData = {
+    const personData: PersonCreateRequest = {
       firstName: personal.firstName,
       lastName: personal.lastName,
       middleName: personal.middleName || undefined,
       dateOfBirth: personal.dateOfBirth,
-      gender: personal.gender || undefined,
+      gender: personal.gender as PersonCreateRequest['gender'],
       primaryAddress,
       contactInfo: {
         email: user.email,
-        // Phone will be added later from contact info form
       },
       languagesSpoken: [detectLanguage()],
       timezone: detectTimezone(),
     }
 
-    createPersonMutation.mutate(personData, {
+    createPerson.mutate({ body: personData }, {
       onSuccess: async () => {
-        // Wait for person query to refetch
         await queryClient.refetchQueries({
-          queryKey: queryKeys.personProfile('me')
+          queryKey: getPersonQueryKey({ path: { person: 'me' } }),
         })
-
-        // Small delay to ensure React re-renders with new context
         await new Promise(resolve => setTimeout(resolve, 100))
-
         navigate({ to: '/dashboard' })
-      }
+      },
     })
   }
 
@@ -147,12 +154,12 @@ function OnboardingPage() {
     }
 
     const personal = formData.personal as PersonalInfo
-    const personData: CreatePersonData = {
+    const personData: PersonCreateRequest = {
       firstName: personal.firstName,
       lastName: personal.lastName,
       middleName: personal.middleName || undefined,
       dateOfBirth: personal.dateOfBirth,
-      gender: personal.gender || undefined,
+      gender: personal.gender as PersonCreateRequest['gender'],
       contactInfo: {
         email: user.email,
       },
@@ -160,18 +167,14 @@ function OnboardingPage() {
       timezone: detectTimezone(),
     }
 
-    createPersonMutation.mutate(personData, {
+    createPerson.mutate({ body: personData }, {
       onSuccess: async () => {
-        // Wait for person query to refetch
         await queryClient.refetchQueries({
-          queryKey: queryKeys.personProfile('me')
+          queryKey: getPersonQueryKey({ path: { person: 'me' } }),
         })
-
-        // Small delay to ensure React re-renders with new context
         await new Promise(resolve => setTimeout(resolve, 100))
-
         navigate({ to: '/dashboard' })
-      }
+      },
     })
   }
 
@@ -233,7 +236,7 @@ function OnboardingPage() {
                   type="button"
                   variant="outline"
                   onClick={goBack}
-                  disabled={createPersonMutation.isPending}
+                  disabled={createPerson.isPending}
                 >
                   <ChevronLeft className="w-4 h-4 mr-2" />
                   Back
@@ -263,13 +266,13 @@ function OnboardingPage() {
                     variant="outline"
                     className="ml-auto mr-2"
                     onClick={handleSkipAddress}
-                    disabled={createPersonMutation.isPending}
+                    disabled={createPerson.isPending}
                   >
                     Skip for now
                   </Button>
                   <Button
                     type="submit"
-                    disabled={createPersonMutation.isPending}
+                    disabled={createPerson.isPending}
                     onClick={() => {
                       // Trigger form submission for final step
                       const forms = document.querySelectorAll('form')
@@ -278,7 +281,7 @@ function OnboardingPage() {
                       }
                     }}
                   >
-                    {createPersonMutation.isPending ? 'Creating Profile...' : 'Complete Setup'}
+                    {createPerson.isPending ? 'Creating Profile...' : 'Complete Setup'}
                     <ChevronRight className="w-4 h-4 ml-2" />
                   </Button>
                 </>

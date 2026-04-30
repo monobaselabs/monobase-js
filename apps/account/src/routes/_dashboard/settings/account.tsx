@@ -1,17 +1,18 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/card"
 import { PersonalInfoForm } from '@/features/person/components/personal-info-form'
 import { AddressForm } from '@/features/person/components/address-form'
 import { ContactInfoForm } from '@/features/person/components/contact-info-form'
 import { PreferencesForm } from '@/features/person/components/preferences-form'
 import {
-  useMyPerson,
-  useUpdateMyPersonalInfo,
-  useUpdateMyContactInfo,
-  useUpdateMyAddress,
-  useUpdateMyPreferences
-} from '@monobase/sdk/react/hooks/use-person'
-import { useFileUpload } from '@monobase/sdk/react/hooks/use-storage'
+  getPersonOptions,
+  getPersonQueryKey,
+  updatePersonMutation,
+} from '@monobase/sdk/generated/@tanstack/react-query.gen'
+import { buildPatch } from '@monobase/sdk/utils/patch'
+import { useFileUpload } from '@monobase/sdk/flows'
+import type { PersonUpdateRequest } from '@monobase/sdk/generated/types.gen'
 
 export const Route = createFileRoute('/_dashboard/settings/account')({
   component: AccountSettingsPage,
@@ -21,25 +22,42 @@ export const Route = createFileRoute('/_dashboard/settings/account')({
 })
 
 function AccountSettingsPage() {
-  const { user } = Route.useRouteContext()
+  const queryClient = useQueryClient()
   const { upload } = useFileUpload()
 
-  const { data: person, isLoading: isLoadingPerson } = useMyPerson()
+  const { data: person, isLoading: isLoadingPerson } = useQuery(
+    getPersonOptions({ path: { person: 'me' } }),
+  )
 
-  const updatePersonalInfo = useUpdateMyPersonalInfo()
-  const updateContactInfo = useUpdateMyContactInfo()
-  const updateAddress = useUpdateMyAddress()
-  const updatePreferences = useUpdateMyPreferences()
+  // One mutation backs all four section forms — each onSubmit shapes its own
+  // partial body via buildPatch and the helper handles the wire call.
+  const updatePerson = useMutation({
+    ...updatePersonMutation(),
+    meta: {
+      toast: {
+        success: 'Profile updated',
+        error: (err: unknown) =>
+          err instanceof Error ? err.message : 'Failed to update profile',
+      },
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: getPersonQueryKey({ path: { person: 'me' } }),
+      })
+    },
+  })
+
+  const submitUpdate = async (patch: PersonUpdateRequest) => {
+    if (!person) return
+    await updatePerson.mutateAsync({
+      path: { person: person.id },
+      body: buildPatch<PersonUpdateRequest>(patch),
+    })
+  }
 
   const handleAvatarUpload = async (file: File): Promise<{ file?: string, url: string }> => {
-    // Upload file to storage and get download URL
-    const uploadedFile = await upload(file)
-
-    // Return file ID and download URL
-    return {
-      file: uploadedFile.id,
-      url: uploadedFile.downloadUrl
-    }
+    const uploaded = await upload(file)
+    return { file: uploaded.fileId, url: uploaded.downloadUrl }
   }
 
   if (isLoadingPerson) {
@@ -55,7 +73,6 @@ function AccountSettingsPage() {
         </p>
       </div>
 
-      {/* Person-specific forms */}
       <Card>
         <CardHeader>
           <CardTitle>Personal Information</CardTitle>
@@ -65,8 +82,7 @@ function AccountSettingsPage() {
           <PersonalInfoForm
             defaultValues={person as never}
             onSubmit={async (data) => {
-              if (!person) return
-              await updatePersonalInfo.mutateAsync({ personId: person.id, data: data as never })
+              await submitUpdate(data as PersonUpdateRequest)
             }}
             mode="edit"
             memberSince={person?.createdAt}
@@ -84,8 +100,7 @@ function AccountSettingsPage() {
           <ContactInfoForm
             defaultValues={person?.contactInfo as never}
             onSubmit={async (data) => {
-              if (!person) return
-              await updateContactInfo.mutateAsync({ personId: person.id, data })
+              await submitUpdate({ contactInfo: data })
             }}
           />
         </CardContent>
@@ -100,8 +115,7 @@ function AccountSettingsPage() {
           <AddressForm
             defaultValues={person?.primaryAddress as never}
             onSubmit={async (data) => {
-              if (!person) return
-              await updateAddress.mutateAsync({ personId: person.id, data })
+              await submitUpdate({ primaryAddress: data })
             }}
           />
         </CardContent>
@@ -116,8 +130,7 @@ function AccountSettingsPage() {
           <PreferencesForm
             defaultValues={person as never}
             onSubmit={async (data) => {
-              if (!person) return
-              await updatePreferences.mutateAsync({ personId: person.id, data })
+              await submitUpdate(data as PersonUpdateRequest)
             }}
           />
         </CardContent>

@@ -17,8 +17,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/alert-dialog'
-import type { Booking } from '@monobase/sdk/services/booking'
-import type { User } from '@monobase/sdk/services/auth'
+import type { Booking } from '@monobase/sdk/generated/types.gen'
+import type { User } from 'better-auth'
 
 export interface ActiveBookingCardProps {
   booking: Booking

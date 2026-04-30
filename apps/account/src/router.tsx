@@ -3,7 +3,7 @@ import { createRouter as createTanStackRouter } from '@tanstack/react-router'
 import { routeTree } from './routeTree.gen.ts'
 import { NotFound } from '@/components/not-found'
 import type { Person } from '@/utils/guards'
-import type { User, Session } from '@monobase/sdk/services/auth'
+import type { User, Session } from 'better-auth'
 
 // ============================================================================
 // Router Context Type

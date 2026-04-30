@@ -13,7 +13,8 @@ import {
   Bell,
 } from 'lucide-react'
 import { UserButton } from '@daveyplate/better-auth-ui'
-import { useUnreadNotifications } from '@monobase/sdk/react/hooks/use-notifications'
+import { useQuery } from '@tanstack/react-query'
+import { listNotificationsOptions } from '@monobase/sdk/generated/@tanstack/react-query.gen'
 
 export const Route = createFileRoute('/_dashboard')({
   beforeLoad: composeGuards(requireAuth, requireEmailVerified, requirePerson),
@@ -22,7 +23,11 @@ export const Route = createFileRoute('/_dashboard')({
 
 function DashboardLayout() {
   // Fetch unread notifications count for badge
-  const { data: unreadData } = useUnreadNotifications()
+  const { data: unreadData } = useQuery({
+    ...listNotificationsOptions({ query: { status: 'unread' } }),
+    staleTime: 30_000,
+    refetchInterval: 60_000,
+  })
   const unreadCount = unreadData?.pagination?.totalCount || 0
 
   // Define navigation structure for the account dashboard

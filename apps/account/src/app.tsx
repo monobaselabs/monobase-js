@@ -1,10 +1,13 @@
 import { RouterProvider } from '@tanstack/react-router'
 import { ApiProvider } from '@monobase/sdk/react/provider'
 import { createRoot } from 'react-dom/client'
+import { toast } from 'sonner'
 import { createRouter } from './router'
 import { initializeOneSignal } from '@/services/onesignal'
 import { useSession } from '@monobase/sdk/react/hooks/use-auth'
-import { useMyPerson } from '@monobase/sdk/react/hooks/use-person'
+import { useQuery } from '@tanstack/react-query'
+import { getPersonOptions } from '@monobase/sdk/generated/@tanstack/react-query.gen'
+import { SdkError } from '@monobase/sdk/client'
 import { useOneSignal } from '@/hooks/use-onesignal'
 import { getRuntimeConfig } from '@/utils/config'
 import { Loading } from '@/components/loading'
@@ -27,7 +30,20 @@ function InnerApp() {
   // This ensures router guards have correct auth context from the start
   // Use isPending (not isLoading) to avoid blocking during retries/refetches
   const { data: session, isPending: sessionPending } = useSession()
-  const { data: person, isPending: personPending } = useMyPerson()
+  // 404 just means "no person profile yet" — surface it as null instead of
+  // an error so guards can route to onboarding without thrashing.
+  const personQuery = useQuery({
+    ...getPersonOptions({ path: { person: 'me' } }),
+    retry: (failureCount, error) => {
+      if (error instanceof SdkError && error.status === 404) return false
+      return failureCount < 3
+    },
+  })
+  const personPending = personQuery.isPending
+  const person =
+    personQuery.error instanceof SdkError && personQuery.error.status === 404
+      ? null
+      : personQuery.data ?? null
 
   // Show loading only on very first fetch before any data/error is received
   if (sessionPending || personPending) {
@@ -77,7 +93,7 @@ function App() {
   }
 
   return (
-    <ApiProvider apiBaseUrl={config.apiUrl}>
+    <ApiProvider apiBaseUrl={config.apiUrl} notifier={toast}>
       <InnerApp />
       <TanStackDevtools
         config={{ position: 'bottom-right' }}

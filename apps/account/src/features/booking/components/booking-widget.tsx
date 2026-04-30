@@ -9,7 +9,7 @@ import { Button } from '@/components/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/card'
 import { Separator } from '@/components/separator'
 import { Alert, AlertDescription } from '@/components/alert'
-import type { BookingTimeSlot, BookingHost, BookingEventData } from '@monobase/sdk/services/booking'
+import type { BookingTimeSlot, BookingHost, BookingEventData } from '@/features/booking/types'
 
 export type { BookingTimeSlot, BookingHost, BookingEventData }
 

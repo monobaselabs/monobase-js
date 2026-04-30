@@ -3,36 +3,42 @@
   "version": "0.1.0",
   "type": "module",
   "exports": {
-    "./api": "./src/api.ts",
-    "./types": "./src/types.ts",
+    "./client": "./src/client.ts",
     "./transport": "./src/transport.ts",
+    "./generated": "./src/generated/index.ts",
+    "./generated/*": "./src/generated/*.ts",
+    "./flows": "./src/flows/index.ts",
+    "./flows/*": "./src/flows/*.ts",
     "./utils/*": "./src/utils/*.ts",
-    "./services/*": "./src/services/*.ts",
     "./react/auth": "./src/react/auth.ts",
     "./react/provider": "./src/react/provider.tsx",
-    "./react/query-keys": "./src/react/query-keys.ts",
+    "./react/use-optimistic-mutation": "./src/react/use-optimistic-mutation.ts",
     "./react/hooks/*": "./src/react/hooks/*.ts"
   },
   "files": ["src"],
   "dependencies": {
     "@daveyplate/better-auth-tanstack": "^1.3.6",
+    "@hey-api/client-fetch": "^0.13.1",
     "@monobase/api-spec": "workspace:*",
-    "better-auth": "^1.3.7",
-    "zod": "^4.1.12"
+    "better-auth": "^1.3.7"
   },
   "peerDependencies": {
     "@tanstack/react-query": "^5.0.0",
     "@tauri-apps/api": "^2.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "sonner": "^2.0.0"
+    "react-hook-form": "^7.63.0"
   },
   "peerDependenciesMeta": {
     "@tauri-apps/api": {
       "optional": true
+    },
+    "react-hook-form": {
+      "optional": true
     }
   },
   "devDependencies": {
+    "@hey-api/openapi-ts": "^0.97.0",
     "@monobase/eslint-config": "workspace:*",
     "@monobase/typescript-config": "workspace:*",
     "@types/react": "^19.0.0",
@@ -42,6 +48,7 @@
     "typescript": "^5.9.2"
   },
   "scripts": {
+    "generate": "openapi-ts",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src",
     "test": "bun test",

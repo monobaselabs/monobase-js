@@ -280,8 +280,8 @@ model UpdateInvoiceRequest {
   @doc("Payment capture method (draft only)")
   paymentCaptureMethod?: CaptureMethod;
   
-  @doc("Payment due date (draft only)")
-  paymentDueAt?: utcDateTime;
+  @doc("Payment due date (draft only). Pass null to clear an existing due date.")
+  paymentDueAt?: utcDateTime | null;
   
   @doc("Void threshold in minutes (draft only)")
   voidThresholdMinutes?: int32;

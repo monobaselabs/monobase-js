@@ -16,7 +16,15 @@ import {
   Loader2,
   Shield,
 } from 'lucide-react'
-import { useNotifications, useMarkNotificationAsRead, useMarkAllNotificationsAsRead } from '@monobase/sdk/react/hooks/use-notifications'
+import { useQuery, useMutation } from '@tanstack/react-query'
+import {
+  listNotificationsOptions,
+  listNotificationsQueryKey,
+  markNotificationAsReadMutation,
+  markAllNotificationsAsReadMutation,
+} from '@monobase/sdk/generated/@tanstack/react-query.gen'
+import { useOptimisticMutation } from '@monobase/sdk/react/use-optimistic-mutation'
+import type { ListNotificationsResponse } from '@monobase/sdk/generated/types.gen'
 import { useFormatDate } from '@/hooks/use-format-date'
 import { Button } from "@/components/button"
 import { 
@@ -42,9 +50,43 @@ export const Route = createFileRoute('/_dashboard/notifications')({
 
 function NotificationsPage() {
   // Fetch notifications from API
-  const { data: notificationsData, isLoading, error } = useNotifications({ limit: 100 })
-  const markAsReadMutation = useMarkNotificationAsRead()
-  const markAllAsReadMutation = useMarkAllNotificationsAsRead()
+  const { data: notificationsData, isLoading, error } = useQuery({
+    ...listNotificationsOptions({ query: { limit: 100 } }),
+    staleTime: 60_000,
+  })
+
+  // Optimistically flip the notification's status to 'read' in the list cache so
+  // the UI updates instantly; the helper handles snapshot/rollback/invalidate.
+  const markAsReadMutation = useOptimisticMutation(
+    markNotificationAsReadMutation(),
+    {
+      optimistic: {
+        queryKey: () => listNotificationsQueryKey({ query: { limit: 100 } }),
+        updater: (current: ListNotificationsResponse | undefined, vars) => {
+          if (!current) return current
+          return {
+            ...current,
+            data: current.data.map((n) =>
+              n.id === vars.path.notif
+                ? { ...n, status: 'read' as const, readAt: new Date() }
+                : n,
+            ),
+          }
+        },
+      },
+    },
+  )
+
+  const markAllAsReadMutation = useMutation({
+    ...markAllNotificationsAsReadMutation(),
+    meta: {
+      toast: {
+        success: 'All notifications marked as read',
+        error: 'Failed to mark all notifications as read',
+      },
+    },
+  })
+
   const { formatRelativeDate } = useFormatDate()
 
   const notifications = notificationsData?.data || []
@@ -97,7 +139,7 @@ function NotificationsPage() {
 
   const handleMarkAsRead = async (id: string) => {
     try {
-      await markAsReadMutation.mutateAsync(id)
+      await markAsReadMutation.mutateAsync({ path: { notif: id } })
     } catch (error) {
       // Error handled by mutation
     }
@@ -105,7 +147,7 @@ function NotificationsPage() {
 
   const handleMarkAllAsRead = async () => {
     try {
-      await markAllAsReadMutation.mutateAsync()
+      await markAllAsReadMutation.mutateAsync({})
     } catch (error) {
       // Error handled by mutation
     }

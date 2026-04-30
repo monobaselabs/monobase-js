@@ -239,6 +239,9 @@ temp/
 # CLAUDE
 CLAUDE.local.md
 
+# Generated SDK (regenerated from specs/api/dist/openapi/openapi.json)
+packages/sdk/src/generated/
+
 # Playwright
 .playwright-mcp
 test-results/

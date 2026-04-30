@@ -7,8 +7,15 @@
 import { redirect } from '@tanstack/react-router'
 import type { RouterContext } from '@/router'
 
-// Re-export types for convenience
-export type { Person, CreatePersonData, UpdatePersonData } from '@monobase/sdk/services/person'
+// Re-export types for convenience.
+// `PersonCreateRequest` / `PersonUpdateRequest` are the canonical schema names
+// from the OpenAPI spec; the previous `CreatePersonData` / `UpdatePersonData`
+// aliases were a frontend-only renaming and have been dropped.
+export type {
+  Person,
+  PersonCreateRequest,
+  PersonUpdateRequest,
+} from '@monobase/sdk/generated/types.gen'
 
 // ============================================================================
 // Route Guard Functions
