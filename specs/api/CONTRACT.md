@@ -237,16 +237,32 @@ Implementations advertise the version they implement at `GET /livez?verbose=true
 
 Not part of business surface, but every implementation must expose:
 
-- `GET /livez` — liveness probe. Returns `200` with `{"status":"healthy"}` if
-  the process is responsive. Must NOT depend on database connectivity.
-- `GET /readyz` — readiness probe. Returns `200` if all upstream
-  dependencies (DB, storage, auth provider) are healthy; `503` otherwise.
-  The body lists per-dependency status.
-- Optional `?verbose=true` on either endpoint adds version + dependency
-  detail.
+- `GET /livez` — liveness probe. Returns `200` with `text/plain` body `ok`
+  by default. Must NOT depend on database connectivity.
+- `GET /readyz` — readiness probe. Returns `200` with `ok` if upstream
+  dependencies (DB, storage, auth provider) are healthy; `503` with `error`
+  otherwise.
+- `GET /livez?verbose=true` / `GET /readyz?verbose=true` — return
+  `application/health+json` (RFC-draft "Health Check Response Format")
+  with `{ status: "pass" | "fail", timestamp, checks: { … } }`. The
+  `checks` map carries per-dependency state for readiness; just
+  `{ ping: "pass" }` for liveness.
 
 These endpoints are followed by container orchestrators and the
 contract test runner; their shape is part of the contract.
+
+---
+
+## Known divergences in the reference TS impl
+
+`services/api-ts` is mostly conformant. Tracked discrepancies that any
+new impl should NOT replicate:
+
+- **List response envelope.** Some collection endpoints (e.g.
+  `GET /booking/events`) return `{ data, totalCount }` at the root
+  instead of the spec'd `{ data, pagination: { totalCount, ... } }`.
+  Hurl tests assert against the impl shape with a `NOTE:` comment until
+  this is fixed.
 
 ---
 

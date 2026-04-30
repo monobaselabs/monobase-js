@@ -5,26 +5,26 @@
 POST {{api}}/auth/sign-up/email
 Content-Type: application/json
 {
-  "email": "{{suffix}}@contract-tests.local",
+  "email": "person-{{suffix}}@example.org",
   "password": "Sup3rSecret!ContractTest",
   "name": "Person Tester"
 }
 HTTP 200
 [Captures]
-session_token: header "set-cookie" regex "(?:^|;|, )(?:[^=]*\\.session_token|monobase\\.session_token|better-auth\\.session_token)=([^;]+)"
+session_token: cookie "better-auth.session_token"
 user_id: jsonpath "$.user.id"
 
 
 # 2. Create the person profile
 POST {{api}}/persons
-Cookie: monobase.session_token={{session_token}}
+Cookie: better-auth.session_token={{session_token}}
 Content-Type: application/json
 {
   "firstName": "Ada",
   "lastName": "Lovelace",
-  "dateOfBirth": "1815-12-10",
+  "dateOfBirth": "1990-05-15",
   "languagesSpoken": ["en"],
-  "timezone": "Etc/UTC"
+  "timezone": "America/New_York"
 }
 HTTP 201
 [Captures]
@@ -37,7 +37,7 @@ jsonpath "$.lastName" == "Lovelace"
 
 # 3. Read it back
 GET {{api}}/persons/{{person_id}}
-Cookie: monobase.session_token={{session_token}}
+Cookie: better-auth.session_token={{session_token}}
 HTTP 200
 [Asserts]
 jsonpath "$.id" == "{{person_id}}"
@@ -46,7 +46,7 @@ jsonpath "$.firstName" == "Ada"
 
 # 4. Patch it
 PATCH {{api}}/persons/{{person_id}}
-Cookie: monobase.session_token={{session_token}}
+Cookie: better-auth.session_token={{session_token}}
 Content-Type: application/json
 {
   "firstName": "Augusta"
