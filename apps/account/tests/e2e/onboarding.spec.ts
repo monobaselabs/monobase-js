@@ -11,19 +11,53 @@ async function signUpNewUser(page: any) {
   const password = 'TestPass123!'
   const name = `TestUser ${timestamp}` // Include space for lastName split
 
-  // Navigate to signup page
+  // Navigate to signup page and wait for the form to fully hydrate. Without
+  // this, the password-input fill can race the React hydration that replaces
+  // the input with a show/hide-toggle wrapper (better-auth-ui), and the
+  // earlier value gets lost.
   await page.goto('/auth/sign-up')
+  await page.waitForLoadState('networkidle')
 
-  // Fill signup form
-  await page.fill('input[type="email"]', email)
-  await page.fill('input[type="password"]', password)
-  await page.fill('input[name="name"]', name)
+  // Use role/label selectors instead of attribute selectors — the password
+  // field lives inside a wrapper with a show/hide toggle. Type each character
+  // (`pressSequentially`) instead of using `fill` because better-auth-ui's
+  // password input doesn't react to a programmatic value-set, only to real
+  // keystrokes (likely an uncontrolled-input + react-hook-form interaction).
+  const submit = page.getByRole('button', { name: /create an account/i })
+  await expect(submit).toBeVisible()
 
-  // Submit signup
-  await page.click('button:has-text("Create an account")')
+  const nameInput = page.getByLabel('Name', { exact: true })
+  const emailInput = page.getByLabel('Email', { exact: true })
+  const passwordInput = page.getByLabel('Password', { exact: true })
+
+  await nameInput.fill(name)
+  await emailInput.fill(email)
+  await passwordInput.click()
+  await passwordInput.pressSequentially(password, { delay: 10 })
+
+  // Confirm the values stuck before submitting (catches the password-reset
+  // race directly rather than letting it surface as a redirect timeout).
+  await expect(emailInput).toHaveValue(email)
+  await expect(passwordInput).toHaveValue(password)
+
+  // Capture the signup network response for diagnostics — surfaces the actual
+  // HTTP error when the submit looks like it succeeded but the page doesn't
+  // navigate.
+  const signupResponse = page.waitForResponse(
+    (resp: any) => /\/auth\/sign-up\b/.test(resp.url()) && resp.request().method() === 'POST',
+    { timeout: 10000 },
+  ).catch(() => null)
+
+  await submit.click()
+
+  const response = await signupResponse
+  if (response && response.status() >= 400) {
+    const body = await response.text().catch(() => '<unreadable>')
+    throw new Error(`Sign-up POST returned ${response.status()}: ${body.slice(0, 500)}`)
+  }
 
   // Wait for redirect (either to onboarding or email verification)
-  await page.waitForURL((url: URL) => !url.pathname.includes('/auth/sign-up'), { timeout: 10000 })
+  await page.waitForURL((url: URL) => !url.pathname.includes('/auth/sign-up'), { timeout: 15000 })
 
   return { email, password, name }
 }
@@ -76,8 +110,24 @@ test.describe('Onboarding Flow', () => {
     await page.fill('input[placeholder*="CA"]', 'TS')
     await page.fill('input[placeholder*="94102"]', '12345')
 
+    // Capture the createPerson response for diagnostics so a server-side
+    // validation failure surfaces as the actual error rather than a generic
+    // "still on /onboarding" redirect timeout.
+    const createPersonResponse = page
+      .waitForResponse(
+        (resp: any) => /\/persons$/.test(resp.url()) && resp.request().method() === 'POST',
+        { timeout: 15000 },
+      )
+      .catch(() => null)
+
     // Complete setup
     await page.click('button:has-text("Complete Setup")')
+
+    const cpr = await createPersonResponse
+    if (cpr && cpr.status() >= 400) {
+      const body = await cpr.text().catch(() => '<unreadable>')
+      throw new Error(`createPerson POST returned ${cpr.status()}: ${body.slice(0, 500)}`)
+    }
 
     // Should redirect to dashboard
     await expect(page).toHaveURL('/dashboard', { timeout: 15000 })

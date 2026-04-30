@@ -20,6 +20,35 @@ import { AddressForm } from '@/features/person/components/address-form'
 import type { PersonalInfo, OptionalAddress } from '@/features/person/schemas'
 import type { PersonCreateRequest } from '@monobase/sdk-ts/generated/types.gen'
 
+/**
+ * Format a Date as YYYY-MM-DD. The OpenAPI spec marks `dateOfBirth` as
+ * TypeSpec `plainDate`, which serializes as `YYYY-MM-DD`. The generated types
+ * are `Date` (from @hey-api/transformers handling response shape), but on the
+ * request side JSON.stringify produces the full ISO datetime — which the
+ * server-side validator rejects. We have to format manually before sending
+ * and cast around the generated type.
+ */
+function toPlainDateString(d: Date | undefined): string | undefined {
+  if (!d) return undefined
+  const yyyy = d.getFullYear()
+  const mm = String(d.getMonth() + 1).padStart(2, '0')
+  const dd = String(d.getDate()).padStart(2, '0')
+  return `${yyyy}-${mm}-${dd}`
+}
+
+const VALID_GENDERS: ReadonlyArray<NonNullable<PersonCreateRequest['gender']>> = [
+  'male',
+  'female',
+  'non-binary',
+  'other',
+  'prefer-not-to-say',
+]
+
+function normalizeGender(value: string | undefined): PersonCreateRequest['gender'] | undefined {
+  if (!value) return undefined
+  return VALID_GENDERS.includes(value as never) ? (value as PersonCreateRequest['gender']) : undefined
+}
+
 export const Route = createFileRoute('/onboarding')({
   beforeLoad: composeGuards(requireAuth, requireEmailVerified, requireNoPerson),
   component: OnboardingPage,
@@ -121,8 +150,10 @@ function OnboardingPage() {
       firstName: personal.firstName,
       lastName: personal.lastName,
       middleName: personal.middleName || undefined,
-      dateOfBirth: personal.dateOfBirth,
-      gender: personal.gender as PersonCreateRequest['gender'],
+      // Cast: the generated type says Date, but the wire format must be
+      // YYYY-MM-DD per the spec's `plainDate` mapping. See toPlainDateString.
+      dateOfBirth: toPlainDateString(personal.dateOfBirth) as unknown as Date,
+      gender: normalizeGender(personal.gender),
       primaryAddress,
       contactInfo: {
         email: user.email,
@@ -158,8 +189,8 @@ function OnboardingPage() {
       firstName: personal.firstName,
       lastName: personal.lastName,
       middleName: personal.middleName || undefined,
-      dateOfBirth: personal.dateOfBirth,
-      gender: personal.gender as PersonCreateRequest['gender'],
+      dateOfBirth: toPlainDateString(personal.dateOfBirth) as unknown as Date,
+      gender: normalizeGender(personal.gender),
       contactInfo: {
         email: user.email,
       },
