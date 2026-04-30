@@ -10,6 +10,7 @@ import {
 } from '@/core/errors';
 import { ChatRoomRepository } from './repos/chatRoom.repo';
 import type { ChatRoomFilters } from './repos/comms.schema';
+import { buildPaginationMeta } from '@/utils/query';
 
 /**
  * listChatRooms
@@ -84,12 +85,7 @@ export async function listChatRooms(
     // Return filtered results
     return ctx.json({
       data: filteredRooms,
-      pagination: {
-        page: page,
-        pageSize: pageSize,
-        totalCount: filteredRooms.length,
-        totalPages: Math.ceil(filteredRooms.length / pageSize)
-      }
+      pagination: buildPaginationMeta(filteredRooms, filteredRooms.length, pageSize, offset)
     }, 200);
   }
 
@@ -120,11 +116,6 @@ export async function listChatRooms(
   // Return paginated response matching TypeSpec definition
   return ctx.json({
     data: finalRooms,
-    pagination: {
-      page: page,
-      pageSize: pageSize,
-      totalCount: allUserRooms.length, // Total before pagination
-      totalPages: Math.ceil(allUserRooms.length / pageSize)
-    }
+    pagination: buildPaginationMeta(finalRooms, allUserRooms.length, pageSize, offset)
   }, 200);
 }

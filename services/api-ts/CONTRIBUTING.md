@@ -678,9 +678,10 @@ bun run typecheck    # TypeScript checking
 bun run db:generate  # Generate migrations
 bun run db:studio    # Drizzle Studio
 
-bun test             # All tests
-bun run test:e2e     # E2E tests
-bun run test:perf    # Performance tests
+bun test             # Unit tests (in-process only)
+# Contract tests live in specs/api/tests/contract; from the repo root:
+#   bun run test:contract       (Hurl, blackbox)
+#   bun run test:contract:fuzz  (Schemathesis, blackbox)
 ```
 
 ### Before Implementing Features

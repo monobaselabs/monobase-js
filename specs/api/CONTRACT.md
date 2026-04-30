@@ -253,19 +253,6 @@ contract test runner; their shape is part of the contract.
 
 ---
 
-## Known divergences in the reference TS impl
-
-`services/api-ts` is mostly conformant. Tracked discrepancies that any
-new impl should NOT replicate:
-
-- **List response envelope.** Some collection endpoints (e.g.
-  `GET /booking/events`) return `{ data, totalCount }` at the root
-  instead of the spec'd `{ data, pagination: { totalCount, ... } }`.
-  Hurl tests assert against the impl shape with a `NOTE:` comment until
-  this is fixed.
-
----
-
 ## Test target
 
 The `specs/api/tests/contract/` Hurl scenarios drive against a single

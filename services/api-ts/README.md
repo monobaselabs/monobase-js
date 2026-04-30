@@ -204,16 +204,19 @@ bun test
 CLAUDECODE=1 bun test
 
 # Specific test types
-bun run test:unit       # Unit tests
-bun run test:e2e        # E2E tests (auto-setup)
-bun run test:perf       # Performance tests
+bun run test:unit       # Unit tests (in-process)
 ```
 
-**Key Features:**
-- ✅ Automatic container management
-- ✅ Perfect isolation per test suite
-- ✅ No manual setup required
-- ✅ Parallel execution support
+End-to-end coverage lives in the language-agnostic Hurl contract suite
+at `specs/api/tests/contract/`. From the repo root, with this impl
+running on `:7213`:
+
+```bash
+bun run test:contract        # Hurl scenarios
+bun run test:contract:fuzz   # Schemathesis fuzz against the OpenAPI bundle
+```
+
+See `TESTING.md` for details.
 
 ## 📖 Documentation
 

@@ -6,6 +6,7 @@ import {
   ForbiddenError,
 } from '@/core/errors';
 import { ReviewRepository, type ReviewFilters } from './repos/review.repo';
+import { buildPaginationMeta } from '@/utils/query';
 
 /**
  * listReviews
@@ -73,6 +74,9 @@ export async function listReviews(
   const result = await repo.findManyWithPagination(filters, {
     pagination: { limit, offset }
   });
-  
-  return ctx.json(result, 200);
+
+  return ctx.json({
+    data: result.data,
+    pagination: buildPaginationMeta(result.data, result.totalCount, limit, offset)
+  }, 200);
 }

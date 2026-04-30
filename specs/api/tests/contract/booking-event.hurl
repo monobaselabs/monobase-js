@@ -50,16 +50,16 @@ jsonpath "$.title" == "30-min consult"
 jsonpath "$.status" == "draft"
 
 
-# 2. List events.
-# NOTE: contract (specs/api/CONTRACT.md) says the envelope is
-# { data, pagination: { totalCount, ... } } but the reference TS impl
-# currently returns { data, totalCount } at the root. Tracked as a
-# contract-conformance bug; for now we assert what the impl returns.
+# 2. List events. Asserts the spec'd PaginatedResponse envelope.
 GET {{api}}/booking/events
 Cookie: better-auth.session_token={{session_token}}
 HTTP 200
 [Asserts]
 jsonpath "$.data" isCollection
+jsonpath "$.pagination.totalCount" exists
+jsonpath "$.pagination.limit" exists
+jsonpath "$.pagination.offset" exists
+jsonpath "$.pagination.hasNextPage" exists
 
 
 # 3. Update title

@@ -7,7 +7,7 @@ import type { BaseContext } from '@/types/app';
 import type { Context } from 'hono';
 import type { DatabaseInstance } from '@/core/database';
 import { BookingEventRepository } from './repos/bookingEvent.repo';
-import { parsePagination } from '@/utils/query';
+import { parsePagination, buildPaginationMeta } from '@/utils/query';
 
 export async function listBookingEvents(c: Context) {
   const db = c.get('database') as DatabaseInstance;
@@ -62,7 +62,10 @@ export async function listBookingEvents(c: Context) {
     // Get events with pagination (expand handled automatically by middleware)
     const result = await repo.findManyWithPagination(filters, { pagination: { limit, offset } });
 
-    return c.json(result);
+    return c.json({
+      data: result.data,
+      pagination: buildPaginationMeta(result.data, result.totalCount, limit, offset)
+    });
   } catch (error) {
     c.var['logger']?.error({ error }, 'Failed to list booking events');
     return c.json({ error: 'Failed to list booking events' }, 500);

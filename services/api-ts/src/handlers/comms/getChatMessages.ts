@@ -10,6 +10,7 @@ import {
 } from '@/core/errors';
 import { ChatRoomRepository } from './repos/chatRoom.repo';
 import { ChatMessageRepository } from './repos/chatMessage.repo';
+import { buildPaginationMeta } from '@/utils/query';
 
 /**
  * getChatMessages
@@ -100,11 +101,6 @@ export async function getChatMessages(
   // Return paginated response matching TypeSpec definition
   return ctx.json({
     data: result.data,
-    pagination: {
-      page: page,
-      pageSize: pageSize,
-      totalCount: result.totalCount,
-      totalPages: Math.ceil(result.totalCount / pageSize)
-    }
+    pagination: buildPaginationMeta(result.data, result.totalCount, pageSize, offset)
   }, 200);
 }
