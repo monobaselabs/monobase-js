@@ -285,7 +285,7 @@ export const baseEntityFields = {
 
 ✅ **CORRECT**:
 ```typescript
-export const patients = pgTable('patient', {
+export const tenants = pgTable('tenant', {
   ...baseEntityFields,
   person: uuid('person_id').notNull().references(() => persons.id),
 });
@@ -293,7 +293,7 @@ export const patients = pgTable('patient', {
 
 ❌ **WRONG**:
 ```typescript
-export const patients = pgTable('patient', {
+export const tenants = pgTable('tenant', {
   ...baseEntityFields,
   personId: uuid('person_id').notNull().references(() => persons.id),
 });
@@ -307,8 +307,8 @@ Plural constants, singular table names:
 
 ```typescript
 // ✅ CORRECT
-export const patients = pgTable('patient', { /* ... */ });
-export const providers = pgTable('provider', { /* ... */ });
+export const tenants = pgTable('tenant', { /* ... */ });
+export const merchants = pgTable('merchant', { /* ... */ });
 export const storedFiles = pgTable('stored_file', { /* ... */ });
 ```
 
@@ -410,50 +410,50 @@ export async function listEntities(ctx: Context) {
 
 ## Field Expansion Pattern
 
-Implement expandable fields for optional related data:
+Implement expandable fields for optional related data. The example below
+uses a hypothetical `tenant` vertical module:
 
 ```typescript
 import { shouldExpand } from '@/utils/query';
 
-export async function getPatient(ctx: Context) {
-  const patientId = ctx.req.param('patient');
+export async function getTenant(ctx: Context) {
+  const tenantId = ctx.req.param('tenant');
   const query = ctx.req.valid('query') as { expand?: string[] };
-  
+
   const expandPerson = shouldExpand(query, 'person');
-  
-  // Call appropriate repository method
-  const patient = expandPerson 
-    ? await repo.findOneWithPerson(patientId)
-    : await repo.findOneById(patientId);
-  
-  if (!patient) throw new NotFoundError('Patient not found');
-  
-  return ctx.json(patient, 200);
+
+  const tenant = expandPerson
+    ? await repo.findOneWithPerson(tenantId)
+    : await repo.findOneById(tenantId);
+
+  if (!tenant) throw new NotFoundError('Tenant not found');
+
+  return ctx.json(tenant, 200);
 }
 ```
 
 **Repository methods**:
 ```typescript
-async findOneById(id: string): Promise<Patient | null> {
+async findOneById(id: string): Promise<Tenant | null> {
   return super.findOneById(id);  // Returns: { person: "uuid-string" }
 }
 
-async findOneWithPerson(id: string): Promise<PatientWithPerson | null> {
+async findOneWithPerson(id: string): Promise<TenantWithPerson | null> {
   const result = await this.db
-    .select({ patient: patients, person: persons })
-    .from(patients)
-    .innerJoin(persons, eq(patients.person, persons.id))
-    .where(eq(patients.id, id))
+    .select({ tenant: tenants, person: persons })
+    .from(tenants)
+    .innerJoin(persons, eq(tenants.person, persons.id))
+    .where(eq(tenants.id, id))
     .limit(1);
-    
-  return result.length > 0 ? { ...result[0].patient, person: result[0].person } : null;
+
+  return result.length > 0 ? { ...result[0].tenant, person: result[0].person } : null;
 }
 ```
 
 **API usage**:
 ```bash
-GET /patients/123              # person is UUID
-GET /patients/123?expand=person  # person is full object
+GET /tenants/123              # person is UUID
+GET /tenants/123?expand=person  # person is full object
 ```
 
 ---
@@ -513,10 +513,10 @@ if (session.user.role !== 'admin') {
 
 **NotFoundError - 404** (with rich context):
 ```typescript
-throw new NotFoundError('Patient not found', {
-  resourceType: 'patient',
-  resource: patientId,
-  suggestions: ['Check patient ID format', 'Verify patient exists']
+throw new NotFoundError('Person not found', {
+  resourceType: 'person',
+  resource: personId,
+  suggestions: ['Check person ID format', 'Verify person exists']
 });
 ```
 
@@ -528,8 +528,8 @@ throw new ValidationError('Invalid email format');
 **BusinessLogicError - 400**:
 ```typescript
 throw new BusinessLogicError(
-  'Cannot schedule appointment: Provider not available',
-  'PROVIDER_UNAVAILABLE'
+  'Cannot book slot: host has no availability',
+  'HOST_UNAVAILABLE'
 );
 ```
 
@@ -540,29 +540,18 @@ throw new UnauthorizedError('Authentication required');
 
 **ForbiddenError - 403**:
 ```typescript
-throw new ForbiddenError('Insufficient permissions to access patient records');
+throw new ForbiddenError('Insufficient permissions to access this record');
 ```
 
-### Healthcare-Specific Errors
-
-**HipaaComplianceError**:
-```typescript
-throw new HipaaComplianceError(
-  'Access requires patient consent',
-  'patient-consent-rule-1',
-  'privacy',
-  auditLogId,
-  ['Obtain patient consent', 'Verify authorized access']
-);
-```
+### Authorization context
 
 **AuthorizationError** (with permission context):
 ```typescript
 throw new AuthorizationError(
   'Insufficient permissions to delete records',
-  'patient:delete',
-  ['patient:read', 'patient:update'],
-  `patient-${patientId}`
+  'person:delete',
+  ['person:read', 'person:update'],
+  `person-${personId}`
 );
 ```
 
@@ -570,17 +559,17 @@ throw new AuthorizationError(
 
 **TimeoutError - 408**:
 ```typescript
-throw new TimeoutError('Patient lookup timed out', 5000, 'database-query', true);
+throw new TimeoutError('Person lookup timed out', 5000, 'database-query', true);
 ```
 
 **ExternalServiceError - 503**:
 ```typescript
 throw new ExternalServiceError(
-  'Insurance verification failed',
-  'insurance-api',
-  'verify-coverage',
-  'INVALID_POLICY',
-  'Policy not found',
+  'Stripe call failed',
+  'stripe-api',
+  'create-payment-intent',
+  'STRIPE_ERROR',
+  'Payment intent creation rejected',
   false
 );
 ```
@@ -598,9 +587,9 @@ All errors return TypeSpec-compliant structure:
   "message": "Patient not found",
   "code": "NOT_FOUND",
   "statusCode": 404,
-  "resourceType": "patient",
-  "resource": "patient-456",
-  "suggestions": ["Check patient ID format"]
+  "resourceType": "person",
+  "resource": "person-456",
+  "suggestions": ["Check person ID format"]
 }
 ```
 

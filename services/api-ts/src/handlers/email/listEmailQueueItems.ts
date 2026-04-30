@@ -4,7 +4,7 @@ import type { DatabaseInstance } from '@/core/database';
 import type { User, Session } from '@/types/auth';
 import { ForbiddenError } from '@/core/errors';
 import { EmailQueueRepository } from './repos/queue.repo';
-import { parsePagination, buildPaginationMeta, parseFilters } from '@/utils/query';
+import { parsePagination, buildPaginationMeta } from '@/utils/query';
 import type { EmailQueueFilters } from './repos/email.schema';
 
 /**

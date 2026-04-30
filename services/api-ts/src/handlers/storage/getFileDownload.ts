@@ -2,13 +2,12 @@ import type { BaseContext } from '@/types/app';
 import type { DatabaseInstance } from '@/core/database';
 import type { User } from '@/types/auth';
 import {
-  UnauthorizedError,
   ForbiddenError,
   NotFoundError,
   ValidationError,
   BusinessLogicError
 } from '@/core/errors';
-import { type FileDownloadResponse, type StoredFile } from './repos/file.schema';
+import { type FileDownloadResponse } from './repos/file.schema';
 import type { StorageProvider } from '@/core/storage';
 import { StorageFileRepository } from './repos/file.repo';
 import { userHasRole } from '@/utils/auth';

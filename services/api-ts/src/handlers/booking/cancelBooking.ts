@@ -6,8 +6,7 @@ import type { User } from '@/types/auth';
 import { 
   ForbiddenError,
   NotFoundError,
-  ValidationError,
-  BusinessLogicError
+  ValidationError
 } from '@/core/errors';
 import { BookingRepository } from './repos/booking.repo';
 import type { BookingActionRequest } from './repos/booking.schema';

@@ -4,8 +4,6 @@
  */
 
 import type { DatabaseInstance } from '@/core/database';
-import { user as userTable } from '@/generated/better-auth/schema';
-import { eq } from 'drizzle-orm';
 import { ForbiddenError } from '@/core/errors';
 
 /**

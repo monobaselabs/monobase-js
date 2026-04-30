@@ -4,12 +4,9 @@ import type { DatabaseInstance } from '@/core/database';
 import type { User } from '@/types/auth';
 import { 
   ForbiddenError,
-  NotFoundError,
-  ValidationError,
-  BusinessLogicError
+  NotFoundError
 } from '@/core/errors';
 import { PersonRepository } from './repos/person.repo';
-import { type PersonUpdateRequest } from './repos/person.schema';
 import { validateDateOfBirth } from '@/utils/date';
 
 /**

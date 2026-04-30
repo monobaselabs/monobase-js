@@ -3,7 +3,6 @@
  * Lists all available booking events for discovery
  */
 
-import type { BaseContext } from '@/types/app';
 import type { Context } from 'hono';
 import type { DatabaseInstance } from '@/core/database';
 import { BookingEventRepository } from './repos/bookingEvent.repo';

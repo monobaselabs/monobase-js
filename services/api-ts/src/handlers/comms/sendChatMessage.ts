@@ -6,7 +6,6 @@ import {
   ForbiddenError,
   NotFoundError,
   ValidationError,
-  BusinessLogicError,
   ConflictError
 } from '@/core/errors';
 import { ChatRoomRepository } from './repos/chatRoom.repo';

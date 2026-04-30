@@ -1,13 +1,10 @@
 import type { BaseContext } from '@/types/app';
 import type { DatabaseInstance } from '@/core/database';
-import { 
-  UnauthorizedError,
-  ForbiddenError,
+import {
   NotFoundError,
   ValidationError,
   BusinessLogicError
 } from '@/core/errors';
-import { type StoredFile } from './repos/file.schema';
 import type { StorageProvider } from '@/core/storage';
 import { StorageFileRepository } from './repos/file.repo';
 

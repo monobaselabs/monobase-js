@@ -3,7 +3,7 @@
  * @module lib/format-date
  */
 
-import { format as dateFnsFormat, formatDistance, formatRelative } from 'date-fns'
+import { format as dateFnsFormat, formatDistance } from 'date-fns'
 
 /**
  * Predefined date format types

@@ -237,7 +237,7 @@ scheduler.registerCron('audit.retention', '0 3 * * *', async (context) => {
   // Archive logs older than 1 year
   const archived = await auditRepo.archiveOldLogs(365);
   
-  // Purge logs older than 7 years (HIPAA)
+  // Purge logs older than 7 years (common regulatory retention)
   const purged = await auditRepo.purgeArchivedLogs(2555);
   
   logger.info('Audit retention complete', { archived, purged });

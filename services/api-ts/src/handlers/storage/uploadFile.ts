@@ -3,11 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import type { DatabaseInstance } from '@/core/database';
 import type { User } from '@/types/auth';
 import {
-  UnauthorizedError,
-  ForbiddenError,
-  NotFoundError,
-  ValidationError,
-  BusinessLogicError
+  ValidationError
 } from '@/core/errors';
 import { type FileUploadResponse, type NewStoredFile } from './repos/file.schema';
 import type { StorageProvider } from '@/core/storage';

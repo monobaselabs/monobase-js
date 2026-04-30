@@ -3,27 +3,17 @@
  * Handles slot generation, availability queries, and slot management
  */
 
-import { eq, and, or, gte, lte, sql, desc, asc, inArray, isNull, type SQL } from 'drizzle-orm';
+import { eq, and, gte, lte, sql, asc, type SQL } from 'drizzle-orm';
 import type { DatabaseInstance } from '@/core/database';
-import { DatabaseRepository, type PaginationOptions } from '@/core/database.repo';
+import { DatabaseRepository } from '@/core/database.repo';
 import {
   timeSlots,
-  bookingEvents,
-  scheduleExceptions,
   type TimeSlot,
-  type NewTimeSlot,
-  type BookingEvent,
-  type ScheduleException
+  type NewTimeSlot
 } from './booking.schema';
-import { persons } from '../../person/repos/person.schema';
-import {
-  generateSlotsForEvent,
-  batchGenerateSlots,
-  validateSlotBoundaries,
-  getNextBookableTime,
-  type GeneratedSlot
-} from '../utils/slotGeneration';
-import { addDays, subDays, addMinutes, format } from 'date-fns';
+
+
+import { subDays } from 'date-fns';
 
 export interface TimeSlotFilters {
   owner?: string;

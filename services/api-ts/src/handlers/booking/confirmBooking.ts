@@ -1,13 +1,10 @@
 import type { ValidatedContext } from '@/types/app';
 import type { ConfirmBookingBody, ConfirmBookingParams } from '@/generated/openapi/validators';
 import type { DatabaseInstance } from '@/core/database';
-import type { NotificationService } from '@/core/notifs';
 import type { User } from '@/types/auth';
 import { 
   ForbiddenError,
-  NotFoundError,
-  ValidationError,
-  BusinessLogicError
+  NotFoundError
 } from '@/core/errors';
 import { BookingRepository } from './repos/booking.repo';
 import type { BookingActionRequest } from './repos/booking.schema';

@@ -53,8 +53,8 @@ export async function getInvoice(
     });
   }
 
-  // Authorization check: user must be the provider who created the invoice
-  // or the patient who is being billed (when we have patient auth)
+  // Authorization check: user must be the invoice's host (merchant)
+  // or the customer who is being billed (when we have client auth)
   // Authorization: merchant, customer, or admin can view
   const merchantPerson = await personRepo.findOneById(invoice.merchant);
   if (!merchantPerson) {

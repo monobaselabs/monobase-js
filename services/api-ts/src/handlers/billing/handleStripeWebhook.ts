@@ -6,7 +6,6 @@ import {
 } from '@/core/errors';
 import { InvoiceRepository, MerchantAccountRepository } from './repos/billing.repo';
 import { invoices } from './repos/billing.schema';
-import { eq } from 'drizzle-orm';
 import type Stripe from 'stripe';
 
 /**
@@ -184,7 +183,7 @@ async function handlePaymentIntentSucceeded(
     'Payment intent succeeded - invoice ready for provider decision'
   );
 
-  // Send payment authorization notification to patient
+  // Send payment authorization notification to customer
   try {
     await notificationService.createNotification({
       recipient: invoice.customer,
@@ -246,7 +245,7 @@ async function handlePaymentIntentFailed(
     'Payment intent failed'
   );
 
-  // Send payment failure notification to patient
+  // Send payment failure notification to customer
   try {
     await notificationService.createNotification({
       recipient: invoice.customer,
@@ -388,9 +387,9 @@ async function handleChargeSucceeded(
     'Charge succeeded - payment captured'
   );
 
-  // Send payment success notifications to both patient and provider
+  // Send payment success notifications to both customer and host (merchant)
   try {
-    // Notification for patient - payment captured
+    // Notification for customer - payment captured
     await notificationService.createNotification({
       recipient: invoice.customer,
       type: 'payment_captured',
@@ -408,7 +407,7 @@ async function handleChargeSucceeded(
       priority: 'normal'
     } as any);
 
-    // Notification for provider - payment received
+    // Notification for host (merchant) - payment received
     await notificationService.createNotification({
       recipient: invoice.merchant,
       type: 'payment_received',
@@ -479,7 +478,7 @@ async function handleChargeFailed(
     'Charge failed'
   );
 
-  // Send charge failure notification to patient
+  // Send charge failure notification to customer
   try {
     await notificationService.createNotification({
       recipient: invoice.customer,

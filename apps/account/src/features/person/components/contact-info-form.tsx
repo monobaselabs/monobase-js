@@ -19,7 +19,7 @@ interface ContactInfoFormProps {
   /**
    * Role-specific context for form customization
    */
-  role?: 'patient' | 'provider'
+  role?: 'client' | 'host'
   /**
    * Custom submit button text
    */
@@ -41,7 +41,7 @@ export function ContactInfoForm({
   showButtons = true,
   onCancel,
   userEmail,
-  role = 'patient',
+  role = 'client',
   submitText,
   formId,
   emailEditable = false
@@ -73,7 +73,7 @@ export function ContactInfoForm({
   const getDefaultSubmitText = () => {
     if (submitText) return submitText
     if (mode === 'create') {
-      return role === 'provider' ? 'Continue Setup' : 'Save'
+      return role === 'host' ? 'Continue Setup' : 'Save'
     }
     return 'Save Changes'
   }

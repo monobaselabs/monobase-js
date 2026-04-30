@@ -1,6 +1,7 @@
 import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import globals from 'globals';
+import unusedImports from 'eslint-plugin-unused-imports';
 
 /** Shared base ESLint flat config for TypeScript packages and services. */
 export default tseslint.config(
@@ -18,6 +19,9 @@ export default tseslint.config(
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
+    plugins: {
+      'unused-imports': unusedImports,
+    },
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'module',
@@ -27,9 +31,13 @@ export default tseslint.config(
       },
     },
     rules: {
-      '@typescript-eslint/no-unused-vars': [
+      // Defer unused-import detection to eslint-plugin-unused-imports
+      // so `eslint --fix` can strip them automatically.
+      '@typescript-eslint/no-unused-vars': 'off',
+      'unused-imports/no-unused-imports': 'warn',
+      'unused-imports/no-unused-vars': [
         'warn',
-        { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' },
+        { args: 'after-used', argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' },
       ],
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/consistent-type-imports': ['warn', { prefer: 'type-imports' }],

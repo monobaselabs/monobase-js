@@ -3,9 +3,9 @@
  * Handles queue operations, status tracking, and retry logic
  */
 
-import { eq, and, or, inArray, isNull, lte, gte, desc, asc, sql, type SQL } from 'drizzle-orm';
+import { eq, and, or, inArray, isNull, lte, gte, asc, sql, type SQL } from 'drizzle-orm';
 import type { DatabaseInstance } from '@/core/database';
-import { DatabaseRepository, type PaginationOptions, type PaginatedResult } from '@/core/database.repo';
+import { DatabaseRepository } from '@/core/database.repo';
 import {
   emailQueue,
   type EmailQueueItem,

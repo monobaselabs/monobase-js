@@ -5,8 +5,7 @@ import type { User } from '@/types/auth';
 import { 
   ForbiddenError,
   NotFoundError,
-  ValidationError,
-  BusinessLogicError
+  ValidationError
 } from '@/core/errors';
 import { PersonRepository } from './repos/person.repo';
 

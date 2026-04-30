@@ -5,14 +5,13 @@
 
 import { eq, and, like, desc, sql, type SQL } from 'drizzle-orm';
 import type { DatabaseInstance } from '@/core/database';
-import { DatabaseRepository, type PaginationOptions } from '@/core/database.repo';
+import { DatabaseRepository } from '@/core/database.repo';
 import {
   invoices,
   invoiceLineItems,
   merchantAccounts,
   type Invoice,
   type NewInvoice,
-  type InvoiceLineItem,
   type NewInvoiceLineItem,
   type MerchantAccount,
   type NewMerchantAccount,

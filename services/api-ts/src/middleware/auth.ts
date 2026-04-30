@@ -11,9 +11,7 @@
 
 import type { Context, Next } from 'hono';
 import type { Variables } from '@/types/app';
-import type { AuthInstance } from '@/utils/auth';
 import type { User, Session } from '@/types/auth';
-import type { DatabaseInstance } from '@/core/database';
 import { UnauthorizedError, ForbiddenError } from '@/core/errors';
 import { userHasRole } from '@/utils/auth';
 

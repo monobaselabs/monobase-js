@@ -3,10 +3,10 @@
  * Relaxed typing approach to avoid complex validation issues
  */
 
-import { Context, Hono } from 'hono';
+import type { Context, Hono } from 'hono';
 import type { DatabaseInstance } from '@/core/database';
 import type { Logger } from '@/types/logger';
-import type { User, Session, AdminLevel } from '@/types/auth';
+import type { User, Session } from '@/types/auth';
 import type { AuthInstance } from '@/core/auth';
 import type { StorageProvider } from '@/core/storage';
 import type { JobScheduler } from '@/core/jobs';

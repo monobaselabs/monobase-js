@@ -55,7 +55,7 @@ export async function finalizeInvoice(
     });
   }
 
-  // Authorization check: must be the provider who created the invoice
+  // Authorization check: must be the invoice's host (merchant)
   const merchantPerson = await personRepo.findOneById(invoice.merchant);
   if (!merchantPerson) {
     throw new NotFoundError('Merchant person not found', {
@@ -66,7 +66,7 @@ export async function finalizeInvoice(
   }
 
   if (merchantPerson.id !== user.id) {
-    throw new ForbiddenError('You can only finalize invoices for your own provider profile');
+    throw new ForbiddenError('You can only finalize invoices for your own merchant account');
   }
 
   // Business rule: only draft invoices can be finalized

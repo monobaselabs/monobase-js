@@ -54,20 +54,20 @@ export async function refundInvoicePayment(
     });
   }
 
-  // Authorization check: provider:owner or admin
+  // Authorization check: host:owner or admin
   const user = session.user;
   const userRoles = user.role ? user.role.split(',').map(r => r.trim()) : [];
   const isAdmin = userRoles.includes('admin');
 
   if (!isAdmin) {
-    // Non-admin users must be the provider (owner)
-    // Find the provider account for the authenticated user
+    // Non-admin users must be the host (owner)
+    // Find the merchant account for the authenticated user
     const authenticatedUserPerson = await personRepo.findOneById(user.id);
     if (!authenticatedUserPerson) {
       throw new ForbiddenError('Provider account not found for authenticated user');
     }
 
-    // Check if this provider is the merchant on the invoice
+    // Check this user owns the merchant account on the invoice
     if (authenticatedUserPerson.id !== invoice.merchant) {
       throw new ForbiddenError('You do not have permission to refund this invoice');
     }

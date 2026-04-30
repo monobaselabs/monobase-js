@@ -17,7 +17,7 @@ import { PersonRepository } from '../person/repos/person.repo';
  * Path: POST /invoices/{id}/capture
  * OperationId: captureInvoicePayment
  * 
- * Capture previously authorized invoice payment (provider decision after service delivery)
+ * Capture previously authorized invoice payment (host decision after service delivery)
  */
 export async function captureInvoicePayment(
   ctx: ValidatedContext<never, never, CaptureInvoicePaymentParams>
@@ -51,14 +51,14 @@ export async function captureInvoicePayment(
     });
   }
 
-  // Authorization check: provider:owner or admin
+  // Authorization check: host:owner or admin
   const user = session.user;
   const userRoles = user.role ? user.role.split(',').map(r => r.trim()) : [];
   const isAdmin = userRoles.includes('admin');
 
   if (!isAdmin) {
-    // Non-admin users must be the provider (owner)
-    // Find the provider account for the authenticated user
+    // Non-admin users must be the host (owner)
+    // Find the merchant account for the authenticated user
     const authenticatedUserPerson = await personRepo.findOneById(user.id);
 
     if (!authenticatedUserPerson) {
@@ -70,7 +70,7 @@ export async function captureInvoicePayment(
       throw new ForbiddenError('Provider account not found for authenticated user');
     }
 
-    // Check if this provider is the merchant on the invoice
+    // Check this user owns the merchant account on the invoice
     if (authenticatedUserPerson.id !== invoice.merchant) {
       logger.error({
         userId: user.id,
@@ -91,7 +91,7 @@ export async function captureInvoicePayment(
     throw new ConflictError('Payment has already been voided');
   }
 
-  // Check if payment is in requires_capture state (authorized and waiting for provider decision)
+  // Check if payment is in requires_capture state (authorized and waiting for host decision)
   if (invoice.paymentStatus !== 'requires_capture') {
     throw new BusinessLogicError(
       'Payment must be authorized (requires_capture) to capture',

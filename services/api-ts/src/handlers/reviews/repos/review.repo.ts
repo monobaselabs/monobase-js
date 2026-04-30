@@ -2,7 +2,7 @@
  * Repository for reviews module - database operations
  */
 
-import { and, eq, isNull, or, type SQL } from 'drizzle-orm';
+import { and, eq, type SQL } from 'drizzle-orm';
 import type { DatabaseInstance } from '@/core/database';
 import { DatabaseRepository } from '@/core/database.repo';
 import { reviews, type Review, type NewReview, type CreateReviewRequest } from './review.schema';

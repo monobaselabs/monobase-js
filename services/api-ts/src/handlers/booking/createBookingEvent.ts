@@ -3,10 +3,7 @@ import type { CreateBookingEventBody } from '@/generated/openapi/validators';
 import type { DatabaseInstance } from '@/core/database';
 import type { User } from '@/types/auth';
 import {
-  ForbiddenError,
-  NotFoundError,
-  ValidationError,
-  BusinessLogicError
+  ValidationError
 } from '@/core/errors';
 import { BookingEventRepository } from './repos/bookingEvent.repo';
 import type { BookingEventCreateRequest } from './repos/booking.schema';

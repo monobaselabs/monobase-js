@@ -64,7 +64,7 @@ export async function payInvoice(
     });
   }
 
-  // Authorization check: patient:owner means the authenticated user must be the patient
+  // Authorization check: client:owner means the authenticated user must be the invoice's customer
   const user = session.user;
   logger.info({ userId: user.id, invoiceCustomer: invoice.customer }, 'Authorization check starting');
 

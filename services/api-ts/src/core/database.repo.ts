@@ -3,7 +3,7 @@
  * Provides common CRUD operations that can be extended by specific repositories
  */
 
-import { eq, and, sql, isNull, type SQL } from 'drizzle-orm';
+import { eq, and, sql, type SQL } from 'drizzle-orm';
 import type { DatabaseInstance } from '@/core/database';
 import type { PgTable } from 'drizzle-orm/pg-core';
 

@@ -3,9 +3,9 @@
  * Encapsulates all database operations for the persons table
  */
 
-import { eq, and, or, ilike, type SQL } from 'drizzle-orm';
+import { and, or, ilike, type SQL } from 'drizzle-orm';
 import type { DatabaseInstance } from '@/core/database';
-import { DatabaseRepository, type PaginationOptions } from '@/core/database.repo';
+import { DatabaseRepository } from '@/core/database.repo';
 import { 
   persons, 
   type Person, 

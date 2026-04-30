@@ -41,7 +41,7 @@ function userNeedsProfile(user: User | null | undefined): boolean {
   if (!user) return false
 
   // user.role is a CSV string of roles added by the better-auth admin plugin,
-  // e.g. "user,client,provider". Not part of the base better-auth User type.
+  // e.g. "user,client,host". Not part of the base better-auth User type.
   const role = (user as User & { role?: string }).role
   return !role?.split(',').includes('client')
 }

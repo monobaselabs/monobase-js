@@ -2,11 +2,8 @@ import type { ValidatedContext } from '@/types/app';
 import type { ListPersonsQuery } from '@/generated/openapi/validators';
 import type { DatabaseInstance } from '@/core/database';
 import type { User } from '@/types/auth';
-import {
-  NotFoundError,
-  ValidationError,
-  BusinessLogicError
-} from '@/core/errors';
+
+
 import { PersonRepository } from './repos/person.repo';
 import { parsePagination, buildPaginationMeta, parseFilters, parseSort } from '@/utils/query';
 

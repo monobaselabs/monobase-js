@@ -54,7 +54,6 @@ Schemathesis must be installed locally (`pipx install schemathesis` or `uv tool 
 
 ## When NOT to use this skill
 
-- For browser/UI flows → `/test-e2e` (Playwright in `apps/account/tests/e2e/`).
 - For TypeScript-only handler unit tests → `/test-api` (Bun test runner).
 - For schema-only changes that don't affect the wire format → no test needed; just regenerate types and rebuild.
 

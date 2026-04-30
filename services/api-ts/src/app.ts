@@ -10,7 +10,7 @@ import type { Config } from '@/core/config';
 // Core dependencies
 import { createAuth } from '@/core/auth';
 import { ensureAdminUsers } from '@/utils/auth';
-import { createDatabase, checkDatabaseConnection, closeDatabaseConnection, runMigrations, type DatabaseInstance } from '@/core/database';
+import { createDatabase, closeDatabaseConnection, runMigrations } from '@/core/database';
 import { createJobScheduler } from '@/core/jobs';
 import { createLogger } from '@/core/logger';
 import { createStorageProvider } from '@/core/storage';

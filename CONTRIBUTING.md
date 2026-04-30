@@ -667,11 +667,11 @@ src/components/documents/DocumentList.tsx          // PascalCase - wrong
 - **Export**: `export function ServiceCard() { ... }`
 - **Import**: `import { ServiceCard } from './service-card'`
 
-**Test Files** (see [Test File Organization](#test-file-organization-and-naming)):
-- Unit tests: Match source file name with `.test.ts` suffix
-  - `service-card.tsx` → `service-card.test.tsx`
-- E2E tests: Use `.spec.ts` suffix in `tests/e2e/`
-  - `booking.spec.ts`, `services.spec.ts`
+**Test Files** (see [Test Layers](#test-layers)):
+- Unit tests: Match source file name with `.test.ts` / `.test.tsx`
+  suffix, colocated with the source file.
+- Contract tests: live in `specs/api/tests/contract/*.hurl`. Do not
+  recreate per-workspace e2e directories.
 
 **Rationale**:
 - **Consistency**: Matches modern JavaScript/TypeScript conventions (React, Next.js, Remix)
@@ -915,10 +915,10 @@ const language = 'EN'  // ❌ uppercase language
 - Zod validators reject invalid formats at runtime
 - Returns 400 error for casing violations
 
-**Test Coverage** (`services/api-ts/tests/e2e/person/person.test.ts`):
-- "International Data Validation" suite tests casing enforcement
-- Validates rejection of incorrect formats
-- Ensures acceptance of correct formats
+**Test Coverage** (`specs/api/tests/contract/person-validation.hurl`):
+- Validates rejection of empty/invalid first name, gender, timezone,
+  language code, and pre-1900 dates of birth.
+- Ensures acceptance of correctly-formatted person data.
 
 ## Module Structure Patterns
 
@@ -1099,356 +1099,100 @@ Opens a web interface at `http://localhost:4983`
 - **JSONB**: Use for flexible consent and configuration data
 - **Timestamps**: Include `created_at` and `updated_at` on all tables
 
-## Test File Organization and Naming
+## Test Layers
 
-### Naming Conventions
+The repo has two intentionally narrow test layers; everything else is
+unsupported.
 
-**Two test types, two conventions:**
-- **Unit Tests**: `.test.ts` (Bun test runner)
-- **E2E Tests**: `.spec.ts` (Playwright)
+### 1. Unit tests (per workspace)
 
-#### Unit Tests - `.test.ts`
-
-All unit tests use `.test.ts` suffix:
-
-- ✅ `billing.test.ts` - Correct
-- ❌ `billing.spec.ts` - Wrong
-
-#### E2E Tests - `.spec.ts`
-
-All Playwright E2E tests use `.spec.ts` suffix:
-
-- ✅ `booking.spec.ts` - Correct
-- ❌ `booking.test.ts` - Wrong
-
-### Test Organization Patterns
-
-#### Unit Tests - Colocated with Source
-
-**Unit tests are placed next to the files they test:**
-
-```
-src/api/billing.ts          # Source file
-src/api/billing.test.ts     # Unit test (colocated)
-
-src/hooks/use-billing.ts    # Source file
-src/hooks/use-billing.test.ts  # Unit test (colocated)
-
-src/utils/formatters.ts     # Source file
-src/utils/formatters.test.ts   # Unit test (colocated)
-```
-
-**Benefits of colocation:**
-- Easier to find tests when editing source files
-- Simpler to move/rename files (test moves with source)
-- Clear what does and doesn't have tests
-- Modern build tools automatically exclude test files
-
-#### E2E Tests - Dedicated Directory (Playwright)
-
-**E2E tests use Playwright's recommended structure:**
-
-```
-tests/e2e/
-├── *.spec.ts                # E2E test files
-├── pages/                   # Page Object Model classes
-│   ├── login.page.ts
-│   └── billing.page.ts
-├── fixtures/                # Test data & custom fixtures
-│   └── test-data.ts
-└── helpers/                 # Utility functions
-    └── auth-helpers.ts
-```
-
-**Playwright structure requirements:**
-- **Page Objects** (`pages/`): Encapsulate page interactions
-- **Fixtures** (`fixtures/`): Test data factories and custom fixtures
-- **Helpers** (`helpers/`): Shared utilities (auth, data creation)
-
-**Benefits of separation:**
-- E2E tests require supporting files (page objects, fixtures)
-- Clear distinction from unit tests
-- Easier to run E2E tests independently
-- Better organization for complex test scenarios
-
-### Examples
-
-**✅ Good:**
-```
-# Unit test - colocated
-src/api/billing.ts
-src/api/billing.test.ts
-
-# E2E test - dedicated directory
-tests/e2e/billing.spec.ts
-tests/e2e/pages/billing.page.ts
-tests/e2e/fixtures/billing-data.ts
-tests/e2e/helpers/billing-helpers.ts
-```
-
-**❌ Bad:**
-```
-# Don't use .spec.ts for unit tests
-src/api/billing.spec.ts
-
-# Don't use .test.ts for E2E tests
-tests/e2e/billing.test.ts
-
-# Don't nest unit tests in __tests__
-src/api/__tests__/billing.test.ts
-
-# Don't colocate E2E tests with source
-src/routes/billing.e2e.spec.ts
-```
-
-### Test Runner Configuration
-
-Frontend apps use **two separate test runners**:
-
-#### Frontend Apps (Using Both Bun + Playwright)
-
-Frontend apps (e.g. account) use:
-- **Bun test runner** for unit tests (colocated in `src/`)
-- **Playwright** for E2E tests (in `tests/e2e/`)
-
-**1. Update `package.json` scripts:**
-```json
-{
-  "scripts": {
-    "test": "bun test src/",           // Unit tests only
-    "test:watch": "bun test src/ --watch",
-    "test:e2e": "playwright test",     // E2E tests only
-    "test:e2e:ui": "playwright test --ui"
-  }
-}
-```
-
-**2. Configure `playwright.config.ts`:**
-```typescript
-import { defineConfig } from '@playwright/test';
-
-export default defineConfig({
-  testDir: './tests/e2e',
-  testMatch: '**/*.spec.ts',  // Only .spec.ts files
-  // ... other config
-});
-```
-
-**3. Running tests:**
-```bash
-# Unit tests (src/**/*.test.ts)
-bun test
-bun test --watch
-
-# E2E tests (tests/e2e/**/*.spec.ts)
-bun run test:e2e
-bun run test:e2e:ui
-```
-
-**Why this works:**
-- `bun test src/` explicitly targets only the src directory
-- Playwright config (`testDir: './tests/e2e'`, `testMatch: '**/*.spec.ts'`) targets only E2E tests
-- Using `.spec.ts` for E2E and `.test.ts` for unit tests provides visual separation
-- Test runners stay separate, no conflicts
-
-#### Backend Services (Using Only Bun)
-
-Backend services (API) use only Bun test runner:
+`*.test.ts` files colocated with the code they test, run with Bun:
 
 ```bash
-# All tests run with Bun
-bun test                    # Runs all *.test.ts files
+cd services/api-ts && bun test
+cd apps/account     && bun test
 ```
 
-No special configuration needed since there's only one test runner.
+Use this layer for pure helpers, validators, and UI components. Anything
+that needs a database, the queue, HTTP, or another impl is **not** a
+unit test — it belongs in the contract suite below.
 
-### Playwright Patterns
+### 2. Contract tests (out-of-process, blackbox)
 
-#### Page Object Model
+The contract suite lives at `specs/api/tests/contract/` as Hurl
+scenarios. The same suite runs against the TS impl, future Rust/Go
+impls, or a remote staging URL — it never reaches into impl internals.
 
-Encapsulate page interactions in classes:
+```bash
+# Boot one impl in another terminal:
+cd services/api-ts && bun run dev:deps:up && bun run dev
 
-```typescript
-// tests/e2e/pages/login.page.ts
-import { Page, Locator } from '@playwright/test';
-
-export class LoginPage {
-  readonly page: Page;
-  readonly emailInput: Locator;
-  readonly passwordInput: Locator;
-  readonly loginButton: Locator;
-
-  constructor(page: Page) {
-    this.page = page;
-    this.emailInput = page.getByLabel('Email');
-    this.passwordInput = page.getByLabel('Password');
-    this.loginButton = page.getByRole('button', { name: 'Login' });
-  }
-
-  async goto() {
-    await this.page.goto('/auth/sign-in');
-  }
-
-  async signIn(email: string, password: string) {
-    await this.emailInput.fill(email);
-    await this.passwordInput.fill(password);
-    await this.loginButton.click();
-  }
-}
+# Run the suite from the repo root:
+bun run test:contract            # Hurl scenarios
+bun run test:contract:fuzz       # Schemathesis fuzz against the OpenAPI bundle
 ```
 
-#### Test Data Fixtures
+The runner (`scripts/run-contract-tests.ts`) does an idempotent admin
+preflight before discovering Hurl files and injects `{{api}}`,
+`{{suffix}}`, `{{admin_token}}`, `{{admin_email}}`,
+`{{admin_password}}`, and `{{mailpit_api}}` into every scenario.
 
-Create reusable test data factories:
+What goes here:
+- Endpoint-level happy paths (sign-up → create person → patch).
+- Auth boundary checks (401, 403, role gating).
+- Pagination envelope, error envelope, `?expand=` semantics.
+- Multi-step flows that span modules (booking host + client).
 
-```typescript
-// tests/e2e/fixtures/test-data.ts
-import { faker } from '@faker-js/faker';
+What does NOT go here:
+- Anything that needs to peek at internal state (DB rows, queue
+  internals, log calls).
+- Validation library behaviour (push into the impl's unit tests).
 
-export function makeTestUser() {
-  return {
-    email: faker.internet.email(),
-    password: 'TestPassword123!',
-    name: faker.person.fullName(),
-  };
-}
+See `specs/api/CONTRACT.md` for the wire contract and
+`specs/api/tests/contract/COVERAGE.md` for what the suite covers + what
+is intentionally deferred (WebSocket signalling, full Stripe pay flow).
 
-export function makeTestServiceProvider(overrides = {}) {
-  return {
-    firstName: faker.person.firstName(),
-    lastName: faker.person.lastName(),
-    specialization: 'Business Consulting',
-    ...overrides,
-  };
-}
-```
+### What was removed
 
-#### Helper Functions
-
-Create shared utilities for common operations:
-
-```typescript
-// tests/e2e/helpers/auth-helpers.ts
-import { Page } from '@playwright/test';
-
-export async function createTestUser(page: Page, userData: any) {
-  const response = await page.request.post('/api/auth/signup', {
-    data: userData,
-  });
-  return response.json();
-}
-
-export async function signInAsUser(page: Page, email: string, password: string) {
-  await page.goto('/auth/sign-in');
-  await page.fill('[name="email"]', email);
-  await page.fill('[name="password"]', password);
-  await page.click('button[type="submit"]');
-  await page.waitForURL('/dashboard');
-}
-```
-
-### Migration Notes
-
-**Current state:**
-- API service uses `.test.ts` ✅
-- Website app E2E uses `.spec.ts` ✅
-- Account app E2E uses `.spec.ts` ✅
-
-**For new code:**
-- Unit tests: Use `.test.ts`, colocate with source files
-- E2E tests: Use `.spec.ts`, place in `tests/e2e/` directory
-- Page objects: Place in `tests/e2e/pages/`
-- Fixtures: Place in `tests/e2e/fixtures/`
-- Helpers: Place in `tests/e2e/helpers/`
+- The in-process Bun `tests/e2e/` suite under `services/api-ts/` is gone.
+- Playwright is not used in this repo; the prior multi-app structure
+  has been collapsed to a single `apps/account` reference.
 
 ## Testing Requirements
 
-### Unit Tests (API Service)
+### Unit tests
 
 ```bash
-cd services/api-ts
-bun test
+cd services/api-ts && bun test
+cd apps/account     && bun test
 ```
 
-Write tests for:
-- Service layer business logic
-- Validation schemas
-- Utility functions
-- Middleware
+Cover:
+- pure helpers and validators
+- middleware logic that doesn't need a request loop
+- React components with light state
 
-**Example Test**:
-```typescript
-// services/api-ts/src/handlers/client/__tests__/service.test.ts
-import { describe, test, expect } from 'bun:test';
-import { ClientService } from '../service';
-
-describe('ClientService', () => {
-  test('creates client with valid data', async () => {
-    const service = new ClientService();
-    const client = await service.createClient({
-      person_id: '123e4567-e89b-12d3-a456-426614174000',
-      service_history: 'New client',
-    });
-    
-    expect(client.id).toBeDefined();
-    expect(client.person_id).toBe('123e4567-e89b-12d3-a456-426614174000');
-  });
-});
-```
-
-### E2E Tests (Frontend Apps)
+### Contract tests
 
 ```bash
-cd apps/account
-bun run test:e2e
+bun run test:contract            # Hurl, blackbox
+bun run test:contract:fuzz       # Schemathesis, OpenAPI conformance
 ```
 
-Write E2E tests for:
-- Critical user flows
-- Authentication
-- Form submissions
-- API integrations
-- Error handling
+When you add a new endpoint, add or extend a Hurl scenario covering its
+happy path + at least one boundary case (auth, validation, conflict).
 
-**Example E2E Test (Playwright)**:
-```typescript
-// apps/account/e2e/booking.spec.ts
-import { test, expect } from '@playwright/test';
+### Type checking
 
-test('client can book appointment', async ({ page }) => {
-  await page.goto('/login');
-  await page.fill('[name="email"]', 'client@example.com');
-  await page.fill('[name="password"]', 'password');
-  await page.click('button[type="submit"]');
-  
-  await page.goto('/hosts');
-  await page.click('text=John Smith Consulting');
-  await page.click('text=Book Appointment');
-  await page.click('[data-testid="time-slot-9am"]');
-  await page.click('button:has-text("Confirm Booking")');
-  
-  await expect(page.locator('text=Appointment confirmed')).toBeVisible();
-});
-```
-
-### Type Checking
-
-Always run type checking before committing:
+Always run before committing:
 
 ```bash
-# Check API service
 cd services/api-ts && bun run typecheck
-
-# Check account app
-cd apps/account && bun run typecheck
+cd apps/account     && bun run typecheck
+cd packages/sdk-ts  && bun run typecheck
+# or, from repo root:
+bun --filter '*' typecheck
 ```
-
-### Test Coverage Requirements
-
-- **Critical Paths**: 100% coverage for payment, booking, authentication
-- **Business Logic**: 80%+ coverage for service layer
-- **Handlers**: Test happy path and error cases
-- **E2E**: Cover primary user workflows
 
 ## Git Workflow
 

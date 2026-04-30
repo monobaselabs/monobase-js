@@ -1,11 +1,8 @@
 import type { ValidatedContext } from '@/types/app';
 import type { ListScheduleExceptionsQuery, ListScheduleExceptionsParams } from '@/generated/openapi/validators';
 import type { DatabaseInstance } from '@/core/database';
-import { 
-  ForbiddenError,
-  NotFoundError,
-  ValidationError,
-  BusinessLogicError
+import {
+  NotFoundError
 } from '@/core/errors';
 import type { User } from '@/types/auth';
 import { ScheduleExceptionRepository, type ScheduleExceptionFilters } from './repos/scheduleException.repo';

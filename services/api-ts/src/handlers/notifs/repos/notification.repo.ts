@@ -3,7 +3,7 @@
  * Handles all notification operations including creation, delivery, and status management
  */
 
-import { eq, and, or, gte, lte, inArray, isNull, desc, type SQL } from 'drizzle-orm';
+import { eq, and, gte, lte, inArray, type SQL } from 'drizzle-orm';
 import type { DatabaseInstance } from '@/core/database';
 import { DatabaseRepository, type PaginationOptions, type PaginatedResult } from '@/core/database.repo';
 import {
@@ -13,8 +13,8 @@ import {
   type NotificationFilters,
   type CreateNotificationRequest
 } from './notification.schema';
-import { PersonRepository } from '../../person/repos/person.repo';
-import { ValidationError, NotFoundError, ForbiddenError } from '@/core/errors';
+import type { PersonRepository } from '../../person/repos/person.repo';
+import { NotFoundError } from '@/core/errors';
 import * as OneSignal from '@onesignal/node-onesignal';
 import { SYSTEM_USER_ID } from '@/core/constants';
 import { subDays } from 'date-fns';

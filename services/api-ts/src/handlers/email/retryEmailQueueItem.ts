@@ -4,8 +4,6 @@ import type { DatabaseInstance } from '@/core/database';
 import type { User, Session } from '@/types/auth';
 import {
   ForbiddenError,
-  NotFoundError,
-  ValidationError,
 } from '@/core/errors';
 import { EmailQueueRepository } from './repos/queue.repo';
 

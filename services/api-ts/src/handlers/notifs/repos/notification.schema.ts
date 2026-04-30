@@ -1,9 +1,9 @@
 /**
  * Database schema for notifications - matches TypeSpec API definition
- * Provides multi-channel notification support with healthcare compliance
+ * Provides multi-channel notification support with consent tracking
  */
 
-import { pgTable, varchar, timestamp, jsonb, pgEnum, index, uuid, boolean } from 'drizzle-orm/pg-core';
+import { pgTable, varchar, timestamp, pgEnum, index, uuid, boolean } from 'drizzle-orm/pg-core';
 import { baseEntityFields } from '@/core/database.schema';
 
 // Notification type enum - matches TypeSpec definition
@@ -65,7 +65,7 @@ export const notifications = pgTable('notification', {
   sentAt: timestamp('sent_at'),
   readAt: timestamp('read_at'), // For in-app notifications
   
-  // Healthcare compliance
+  // Consent tracking
   consentValidated: boolean('consent_validated').notNull().default(false),
 }, (table) => ({
   // Indexes for efficient querying

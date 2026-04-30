@@ -2,13 +2,8 @@ import type { BaseContext } from '@/types/app';
 import type { DatabaseInstance } from '@/core/database';
 import type { User } from '@/types/auth';
 import {
-  UnauthorizedError,
-  ForbiddenError,
-  NotFoundError,
-  ValidationError,
-  BusinessLogicError
+  ValidationError
 } from '@/core/errors';
-import { type StoredFile } from './repos/file.schema';
 import { StorageFileRepository } from './repos/file.repo';
 import { parsePagination, buildPaginationMeta, parseFilters } from '@/utils/query';
 import { userHasRole } from '@/utils/auth';
@@ -59,7 +54,7 @@ export async function listFiles(
     try {
       await audit.logEvent({
         eventType: 'data-access',
-        category: 'hipaa',
+        category: 'privacy',
         action: 'read',
         outcome: 'success',
         user: user.id,

@@ -3,7 +3,6 @@ import type { ListAuditLogsQuery } from '@/generated/openapi/validators';
 import type { DatabaseInstance } from '@/core/database';
 import type { User } from '@/types/auth';
 import {
-  NotFoundError,
   ValidationError
 } from '@/core/errors';
 import { parsePagination, buildPaginationMeta, parseFilters } from '@/utils/query';

@@ -5,16 +5,14 @@
 
 import { eq, and, gte, lte, desc, asc, type SQL } from 'drizzle-orm';
 import type { DatabaseInstance } from '@/core/database';
-import { DatabaseRepository, type PaginationOptions } from '@/core/database.repo';
+import { DatabaseRepository } from '@/core/database.repo';
 import {
   chatMessages,
   type ChatMessage,
   type NewChatMessage,
   type ChatMessageFilters,
   type VideoCallData,
-  type CallParticipant,
-  type SendTextMessageRequest,
-  type StartVideoCallRequest
+  type CallParticipant
 } from './comms.schema';
 import { differenceInMinutes, max } from 'date-fns';
 

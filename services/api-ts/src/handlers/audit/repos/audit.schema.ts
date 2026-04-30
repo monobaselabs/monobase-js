@@ -1,6 +1,6 @@
 /**
  * Database schema for audit logs - matches TypeSpec API definition
- * Uses Drizzle ORM with PostgreSQL for HIPAA-compliant audit trails
+ * Uses Drizzle ORM with PostgreSQL for tamper-evident audit trails
  */
 
 import { pgTable, varchar, timestamp, jsonb, pgEnum, index, uuid, text } from 'drizzle-orm/pg-core';
@@ -19,11 +19,11 @@ export const auditEventTypeEnum = pgEnum('audit_event_type', [
 
 // Audit category enumeration - matches TypeSpec definition
 export const auditCategoryEnum = pgEnum('audit_category', [
-  'hipaa',
+  'regulatory',
   'security',
   'privacy',
   'administrative',
-  'clinical',
+  'domain',
   'financial'
 ]);
 
@@ -65,7 +65,7 @@ export const auditLogEntries = pgTable('audit_log_entry', {
   
   // Context information
   user: uuid('user'), // UUID reference to user
-  userType: varchar('user_type', { length: 20 }), // client, provider, admin, system
+  userType: varchar('user_type', { length: 20 }), // client, host, admin, system
   resourceType: varchar('resource_type', { length: 100 }).notNull(),
   resource: varchar('resource', { length: 255 }).notNull(),
   
@@ -106,7 +106,7 @@ export type NewAuditLogEntry = typeof auditLogEntries.$inferInsert;
 
 // Enum type exports for type safety
 export type AuditEventType = 'authentication' | 'data-access' | 'data-modification' | 'system-config' | 'security' | 'compliance';
-export type AuditCategory = 'hipaa' | 'security' | 'privacy' | 'administrative' | 'clinical' | 'financial';
+export type AuditCategory = 'regulatory' | 'security' | 'privacy' | 'administrative' | 'domain' | 'financial';
 export type AuditAction = 'create' | 'read' | 'update' | 'delete' | 'login' | 'logout';
 export type AuditOutcome = 'success' | 'failure' | 'partial' | 'denied';
 export type AuditRetentionStatus = 'active' | 'archived' | 'pending-purge';

@@ -11,7 +11,6 @@ import { EmailTemplateRepository } from '@/handlers/email/repos/template.repo';
 import { EmailQueueRepository } from '@/handlers/email/repos/queue.repo';
 import { initializeEmailTemplates } from '@/handlers/email/templates/initializer';
 import {
-  EmailTemplateTags,
   type QueueEmailRequest,
   type EmailQueueItem,
   type EmailTemplate,

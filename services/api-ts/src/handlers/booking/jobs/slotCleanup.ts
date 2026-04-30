@@ -7,7 +7,7 @@ import type { JobContext } from '@/core/jobs';
 import { TimeSlotRepository } from '../repos/timeSlot.repo';
 import { BookingRepository } from '../repos/booking.repo';
 import { subDays, subMonths, format } from 'date-fns';
-import { and, eq, lte, inArray, sql, isNull } from 'drizzle-orm';
+import { and, eq, lte, inArray, sql } from 'drizzle-orm';
 import { timeSlots, bookings } from '../repos/booking.schema';
 
 /**

@@ -9,7 +9,6 @@ import {
 } from '@/core/errors';
 import { EmailTemplateRepository } from './repos/template.repo';
 import { EmailQueueRepository } from './repos/queue.repo';
-import type { EmailQueueItem } from './repos/email.schema';
 
 /**
  * testEmailTemplate
@@ -93,7 +92,7 @@ export async function testEmailTemplate(
     }
   });
   
-  // Log comprehensive audit trail for healthcare compliance
+  // Log comprehensive audit trail for the email-template test request
   logger?.info({
     action: 'test_email_template',
     userId: user?.id,
@@ -104,7 +103,7 @@ export async function testEmailTemplate(
     hasVariables: !!body.variables,
     priority: queueItem.priority,
     timestamp: new Date().toISOString(),
-    // Healthcare compliance fields
+    // Audit trail fields
     activity: 'email_template_testing',
     resourceType: 'email_template',
     resourceId: params.template

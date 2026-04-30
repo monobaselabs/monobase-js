@@ -3,16 +3,14 @@
  * Handles participant-based filtering and room management
  */
 
-import { eq, and, or, ne, desc, sql, isNull, isNotNull, type SQL } from 'drizzle-orm';
+import { eq, and, or, desc, sql, isNull, isNotNull, type SQL } from 'drizzle-orm';
 import type { DatabaseInstance } from '@/core/database';
 import { DatabaseRepository } from '@/core/database.repo';
 import { 
   chatRooms,
-  chatMessages,
   type ChatRoom, 
   type NewChatRoom,
-  type ChatRoomFilters,
-  type ChatRoomWithLastMessage
+  type ChatRoomFilters
 } from './comms.schema';
 
 export class ChatRoomRepository extends DatabaseRepository<ChatRoom, NewChatRoom, ChatRoomFilters> {

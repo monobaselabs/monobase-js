@@ -8,19 +8,15 @@ import {
   uuid, 
   integer, 
   text, 
-  time, 
-  date, 
   timestamp, 
   boolean, 
-  decimal, 
   jsonb, 
   index, 
   unique,
   pgEnum,
-  check,
-  varchar
+  check
 } from 'drizzle-orm/pg-core';
-import { eq, and, gte, isNull, sql } from 'drizzle-orm';
+import { sql } from 'drizzle-orm';
 import { baseEntityFields } from '@/core/database.schema';
 import { persons } from '../../person/repos/person.schema';
 

@@ -3,8 +3,8 @@
  * Defines tables for email templates and queue with runtime resolution support
  */
 
-import { pgTable, uuid, varchar, text, jsonb, timestamp, integer, pgEnum, unique, index, boolean } from 'drizzle-orm/pg-core';
-import { baseEntityFields, type BaseEntity } from '@/core/database.schema';
+import { pgTable, uuid, varchar, text, jsonb, timestamp, integer, pgEnum, index } from 'drizzle-orm/pg-core';
+import { baseEntityFields } from '@/core/database.schema';
 
 /**
  * Variable types for email template variables

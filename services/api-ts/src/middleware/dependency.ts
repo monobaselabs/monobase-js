@@ -3,7 +3,7 @@
  * Injects core dependencies into request context
  */
 
-import { Next } from 'hono';
+import type { Next } from 'hono';
 import type { AppContext, App } from '@/types/app';
 import type { Config } from '@/core/config';
 

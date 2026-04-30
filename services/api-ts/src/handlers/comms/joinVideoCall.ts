@@ -2,7 +2,6 @@ import type { ValidatedContext } from '@/types/app';
 import type { JoinVideoCallBody, JoinVideoCallParams } from '@/generated/openapi/validators';
 import type { DatabaseInstance } from '@/core/database';
 import type { User } from '@/types/auth';
-import type { Config } from '@/core/config';
 import {
   ForbiddenError,
   NotFoundError,

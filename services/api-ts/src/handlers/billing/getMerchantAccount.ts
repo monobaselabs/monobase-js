@@ -8,7 +8,6 @@
 import type { ValidatedContext } from '@/types/app';
 import type { GetMerchantAccountParams } from '@/generated/openapi/validators';
 import { ForbiddenError, NotFoundError, ValidationError } from '@/core/errors';
-import type { Session } from '@/types/auth';
 import type { User } from '@/types/auth';
 import { MerchantAccountRepository } from './repos/billing.repo';
 

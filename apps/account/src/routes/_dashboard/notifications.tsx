@@ -1,17 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useState, useMemo } from 'react'
+import { useMemo } from 'react'
 import {
   Bell,
-  BellRing,
   Check,
-  Clock,
   Calendar,
-  FileText,
-  Pill,
   CreditCard,
-  UserCheck,
   AlertCircle,
-  Trash2,
   MoreVertical,
   Loader2,
   Shield,
@@ -29,13 +23,9 @@ import { useFormatDate } from '@/hooks/use-format-date'
 import { Button } from "@/components/button"
 import { 
   Card, 
-  CardContent, 
-  CardDescription, 
-  CardHeader, 
-  CardTitle 
+  CardContent 
 } from "@/components/card"
 import { Badge } from "@/components/badge"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/avatar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/tabs"
 import {
   DropdownMenu,

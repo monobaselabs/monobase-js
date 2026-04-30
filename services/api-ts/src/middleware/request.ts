@@ -3,7 +3,7 @@
  * Combines request ID generation/extraction and request logging
  */
 
-import { Next } from 'hono';
+import type { Next } from 'hono';
 import type { AppContext } from '@/types/app';
 import type { Config } from '@/core/config';
 

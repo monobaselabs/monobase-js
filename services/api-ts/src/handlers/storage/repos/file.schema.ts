@@ -4,7 +4,7 @@
  */
 
 import { pgTable, uuid, varchar, bigint, timestamp, pgEnum } from 'drizzle-orm/pg-core';
-import { baseEntityFields, type BaseEntity } from '@/core/database.schema';
+import { baseEntityFields } from '@/core/database.schema';
 
 // File status enum
 export const fileStatusEnum = pgEnum('file_status', [

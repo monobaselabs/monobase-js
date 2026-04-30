@@ -48,7 +48,6 @@ For each module that needs UI:
 
 ### Phase 5: Integration
 
-1. Run `/test-e2e` — if E2E tests exist or were written
 2. Run `/pre-commit` — full verification checklist
 
 ### Phase 6: Ship

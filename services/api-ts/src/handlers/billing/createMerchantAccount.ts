@@ -1,8 +1,8 @@
 /**
  * Create Merchant Account Handler
  * 
- * Creates a Stripe Connect Express account for a provider to receive payments.
- * Requires provider to be the owner of the account or an admin.
+ * Creates a Stripe Connect Express account for a host (merchant) to receive payments.
+ * Requires the host to own the account, or an admin.
  */
 
 import { 

@@ -70,12 +70,6 @@ export class AuthorizationError extends AppError {
   }
 }
 
-export class HipaaComplianceError extends AppError {
-  constructor(message: string, hipaaRule: string, violationType: 'privacy' | 'security' | 'breach' | 'access-control', auditLog?: string, remediationRequired?: string[]) {
-    super(message, 'HIPAA_COMPLIANCE_ERROR', 400, { hipaaRule, violationType, auditLog, remediationRequired });
-  }
-}
-
 export class TimeoutError extends AppError {
   constructor(message: string = 'Operation timed out', timeoutMs: number, operation?: string, retryable: boolean = false) {
     super(message, 'TIMEOUT_ERROR', 408, { timeoutMs, operation, retryable });
@@ -230,19 +224,6 @@ export function createErrorHandler(config: Config) {
         };
 
         return c.json(applySecurity(authzResponse, config), err.statusCode as any);
-      }
-
-      // Handle HipaaComplianceError with specialized TypeSpec model
-      if (err instanceof HipaaComplianceError) {
-        const hipaaResponse = {
-          ...createBaseErrorFields(c, err, err.statusCode, config),
-          hipaaRule: err.details?.hipaaRule,
-          violationType: err.details?.violationType,
-          auditLog: err.details?.auditLog,
-          remediationRequired: err.details?.remediationRequired,
-        };
-
-        return c.json(applySecurity(hipaaResponse, config), err.statusCode as any);
       }
 
       // Handle TimeoutError with specialized TypeSpec model

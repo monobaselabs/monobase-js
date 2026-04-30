@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react'
-import Cropper, { Area } from 'react-easy-crop'
+import type { Area } from 'react-easy-crop';
+import Cropper from 'react-easy-crop'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from './dialog'
 import { Button } from './button'
 import { Slider } from './slider'

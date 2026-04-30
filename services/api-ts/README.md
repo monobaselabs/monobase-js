@@ -220,17 +220,18 @@ See `TESTING.md` for details.
 
 ## 📖 Documentation
 
-### Specialized Guides
-- **[CONTRIBUTING.md](./CONTRIBUTING.md)** - API development patterns, handler implementation, database operations
-- **[TESTING.md](./TESTING.md)** - Test infrastructure, Docker setup, testing patterns
-- **[docs/AUTHENTICATION.md](./docs/AUTHENTICATION.md)** - Better-Auth integration and usage
-- **[docs/VIDEO_CALL.md](./docs/VIDEO_CALL.md)** - WebRTC video calls and real-time communication
-- **[docs/REALTIME.md](./docs/REALTIME.md)** - WebSocket patterns and architecture
-- **[docs/EMAILS.md](./docs/EMAILS.md)** - Email templates, queue system, and providers
-- **[docs/NOTIFS.md](./docs/NOTIFS.md)** - Multi-channel notification delivery
-- **[docs/DEVELOPMENT.md](./docs/DEVELOPMENT.md)** - API design standards and TypeSpec patterns
-- **[docs/BILLING.md](./docs/BILLING.md)** - Stripe integration (coming soon)
-- **[docs/JOBS.md](./docs/JOBS.md)** - Background job patterns (coming soon)
+### Reference impl docs
+- **[CONTRIBUTING.md](./CONTRIBUTING.md)** - Handler patterns, database workflow
+- **[TESTING.md](./TESTING.md)** - Unit + contract test layers
+- **[docs/AUTHENTICATION.md](./docs/AUTHENTICATION.md)** - Better-Auth integration
+- **[docs/REALTIME.md](./docs/REALTIME.md)** - WebSocket envelope + auth
+- **[docs/JOBS.md](./docs/JOBS.md)** - Background jobs via pg-boss
+
+### Spec / contract
+- **[../../specs/api/CONTRACT.md](../../specs/api/CONTRACT.md)** - Wire-level contract every impl satisfies
+- **[../../specs/api/IMPLEMENTING.md](../../specs/api/IMPLEMENTING.md)** - Playbook for adding a new server impl
+- **[../../specs/api/docs/DEVELOPMENT.md](../../specs/api/docs/DEVELOPMENT.md)** - TypeSpec standards
+- **[../../specs/api/docs/SECURITY.md](../../specs/api/docs/SECURITY.md)** - RBAC tokens + auth contract
 
 ### External References
 - **[Better-Auth](https://better-auth.com/docs)** - Authentication library documentation

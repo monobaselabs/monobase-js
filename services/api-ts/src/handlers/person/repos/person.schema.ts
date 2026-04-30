@@ -3,7 +3,7 @@
  * Uses Drizzle ORM with PostgreSQL
  */
 
-import { pgTable, varchar, timestamp, date, jsonb, pgEnum, index } from 'drizzle-orm/pg-core';
+import { pgTable, varchar, date, jsonb, pgEnum, index } from 'drizzle-orm/pg-core';
 import { baseEntityFields } from '@/core/database.schema';
 
 // Gender enum - matches TypeSpec definition

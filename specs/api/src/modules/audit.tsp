@@ -128,7 +128,7 @@ model AuditLogEntry extends BaseEntity {
   user?: UUID;
 
   @doc("User type")
-  userType?: "client" | "service_provider" | "admin" | "system";
+  userType?: "client" | "host" | "admin" | "system";
 
   @doc("Affected resource type")
   resourceType: string;
@@ -192,7 +192,7 @@ namespace AuditModule {
      @extension("x-security-required-roles", #["admin", "support"])
      @route("/logs")
      listAuditLogs(
-        @doc("Filter by resource type (e.g., 'booking', 'client', 'service_provider')")
+        @doc("Filter by resource type (e.g., 'booking', 'person', 'invoice')")
         @query resourceType?: SafeQueryString,
         @doc("Filter by specific resource UUID")
         @query resource?: UUID,

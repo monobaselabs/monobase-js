@@ -1,5 +1,5 @@
 CREATE TYPE "public"."audit_action" AS ENUM('create', 'read', 'update', 'delete', 'login', 'logout');--> statement-breakpoint
-CREATE TYPE "public"."audit_category" AS ENUM('hipaa', 'security', 'privacy', 'administrative', 'clinical', 'financial');--> statement-breakpoint
+CREATE TYPE "public"."audit_category" AS ENUM('regulatory', 'security', 'privacy', 'administrative', 'domain', 'financial');--> statement-breakpoint
 CREATE TYPE "public"."audit_event_type" AS ENUM('authentication', 'data-access', 'data-modification', 'system-config', 'security', 'compliance');--> statement-breakpoint
 CREATE TYPE "public"."audit_outcome" AS ENUM('success', 'failure', 'partial', 'denied');--> statement-breakpoint
 CREATE TYPE "public"."audit_retention_status" AS ENUM('active', 'archived', 'pending-purge');--> statement-breakpoint

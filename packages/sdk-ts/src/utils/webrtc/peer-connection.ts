@@ -3,7 +3,8 @@
  * Manages RTCPeerConnection for 1-on-1 video calls
  */
 
-import { SignalingClient, SignalMessage, ChatMessage } from './signaling-client'
+import type { SignalMessage, ChatMessage } from './signaling-client';
+import { SignalingClient } from './signaling-client'
 
 type RemoteStreamHandler = (stream: MediaStream) => void
 type ConnectionStateHandler = (state: RTCPeerConnectionState) => void

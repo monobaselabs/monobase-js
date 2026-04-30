@@ -3,9 +3,9 @@
  * Handles CRUD operations for booking management
  */
 
-import { eq, and, or, gte, lte, inArray, isNull, desc, asc, type SQL } from 'drizzle-orm';
+import { eq, and, or, gte, lte, inArray, type SQL } from 'drizzle-orm';
 import type { DatabaseInstance } from '@/core/database';
-import { DatabaseRepository, type PaginationOptions } from '@/core/database.repo';
+import { DatabaseRepository } from '@/core/database.repo';
 import {
   bookings,
   timeSlots,
@@ -15,8 +15,7 @@ import {
   type TimeSlot
 } from './booking.schema';
 import { bookingEvents } from './booking.schema';
-import { persons } from '../../person/repos/person.schema';
-import { NotFoundError, ConflictError, ValidationError } from '@/core/errors';
+import { NotFoundError, ConflictError } from '@/core/errors';
 import { InvoiceRepository } from '../../billing/repos/billing.repo';
 
 export interface BookingFilters {

@@ -3,7 +3,7 @@
  * Handles blocked time periods for booking events
  */
 
-import { eq, and, or, gte, lte, isNull, type SQL } from 'drizzle-orm';
+import { eq, and, gte, lte, type SQL } from 'drizzle-orm';
 import type { DatabaseInstance } from '@/core/database';
 import { DatabaseRepository } from '@/core/database.repo';
 import {
@@ -11,10 +11,9 @@ import {
   bookingEvents,
   type ScheduleException,
   type NewScheduleException,
-  type ScheduleExceptionCreateRequest,
-  type RecurrencePattern
+  type ScheduleExceptionCreateRequest
 } from './booking.schema';
-import { addDays, addWeeks, addMonths, format } from 'date-fns';
+import { addDays, addWeeks, addMonths } from 'date-fns';
 
 export interface ScheduleExceptionFilters {
   event?: string;

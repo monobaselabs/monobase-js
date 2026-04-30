@@ -3,8 +3,8 @@
  * Core algorithms for generating booking slots from booking events
  */
 
-import { addDays, addMinutes, format, isAfter, isBefore, isWithinInterval, parseISO, startOfDay, setHours, setMinutes, differenceInMinutes, set, addHours } from 'date-fns';
-import { toZonedTime, fromZonedTime } from 'date-fns-tz';
+import { addDays, addMinutes, format, isAfter, isBefore, startOfDay, setHours, setMinutes, differenceInMinutes, set, addHours } from 'date-fns';
+import { fromZonedTime } from 'date-fns-tz';
 import type { BookingEvent, NewTimeSlot, DayOfWeek } from '../repos/booking.schema';
 
 export interface SlotGenerationConfig {

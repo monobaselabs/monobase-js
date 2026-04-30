@@ -9,14 +9,13 @@ import {
   integer,
   varchar,
   timestamp,
-  text,
   boolean,
   jsonb,
   pgEnum,
   index,
   unique
 } from 'drizzle-orm/pg-core';
-import { baseEntityFields, type BaseEntity } from '@/core/database.schema';
+import { baseEntityFields } from '@/core/database.schema';
 import { persons } from '../../person/repos/person.schema';
 
 // Enums matching TypeSpec billing.tsp definition

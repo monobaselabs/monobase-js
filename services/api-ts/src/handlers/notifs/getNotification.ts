@@ -2,7 +2,7 @@ import type { ValidatedContext } from '@/types/app';
 import type { GetNotificationParams } from '@/generated/openapi/validators';
 import type { DatabaseInstance } from '@/core/database';
 import type { User } from '@/types/auth';
-import { NotFoundError, ForbiddenError } from '@/core/errors';
+import { NotFoundError } from '@/core/errors';
 import { NotificationRepository } from './repos/notification.repo';
 import { PersonRepository } from '../person/repos/person.repo';
 

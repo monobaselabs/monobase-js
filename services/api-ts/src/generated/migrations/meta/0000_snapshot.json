@@ -1,5 +1,5 @@
 {
-  "id": "f711df0a-1f9f-4e4b-a1b4-96fbda3446c9",
+  "id": "6ae7558e-6682-40ff-b861-e319062ce6db",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -4420,11 +4420,11 @@
       "name": "audit_category",
       "schema": "public",
       "values": [
-        "hipaa",
+        "regulatory",
         "security",
         "privacy",
         "administrative",
-        "clinical",
+        "domain",
         "financial"
       ]
     },

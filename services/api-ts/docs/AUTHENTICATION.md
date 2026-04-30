@@ -19,7 +19,7 @@ sequenceDiagram
     API-->>Client: 200 OK + set-auth-token header
     Note over Client: Extract & store token
     
-    Client->>Protected Endpoint: GET /patients/me
+    Client->>Protected Endpoint: GET /persons/me
     Note over Client: Authorization: Bearer {token}
     Protected Endpoint-->>Client: 200 OK + Resource data
 ```
@@ -69,7 +69,7 @@ TOKEN="eNAnB5w0vD3x3TikNuCU5gPLVg3egR4g.qvb4RbVVp9ctwJb%2FBzevcQJBvXTLNGb6zu%2Fz
 Include the token in the `Authorization` header with the `Bearer` prefix:
 
 ```bash
-curl -X GET http://localhost:7213/patients/me \
+curl -X GET http://localhost:7213/persons/me \
   -H "Authorization: Bearer $TOKEN"
 ```
 
@@ -109,11 +109,11 @@ curl http://localhost:7213/livez
 
 ### Protected Endpoints (Authentication Required)
 ```bash
-# Get current user's patient profile
-curl -H "Authorization: Bearer $TOKEN" http://localhost:7213/patients/me
+# Get current user's person profile
+curl -H "Authorization: Bearer $TOKEN" http://localhost:7213/persons/me
 
-# Create a patient profile
-curl -X POST http://localhost:7213/patients \
+# Create a person profile
+curl -X POST http://localhost:7213/persons \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"person": {"firstName": "Jane", "lastName": "Doe", ...}}'
@@ -134,7 +134,7 @@ RESPONSE=$(curl -X POST http://localhost:7213/auth/sign-in/email \
 TOKEN=$(echo "$RESPONSE" | grep -i "set-auth-token" | cut -d' ' -f2 | tr -d '\r')
 
 # 3. Use the token to access protected endpoints
-curl -X GET http://localhost:7213/patients/me \
+curl -X GET http://localhost:7213/persons/me \
   -H "Authorization: Bearer $TOKEN" \
   -s | jq
 ```
@@ -152,7 +152,7 @@ curl -X GET http://localhost:7213/patients/me \
 
 ```bash
 # Verbose output to see headers
-curl -v -X GET http://localhost:7213/patients/me \
+curl -v -X GET http://localhost:7213/persons/me \
   -H "Authorization: Bearer $TOKEN"
 
 # Common issues:

@@ -8,17 +8,14 @@ import {
   uuid, 
   text, 
   timestamp, 
-  boolean, 
   integer, 
   jsonb, 
-  index, 
-  unique,
+  index,
   pgEnum
 } from 'drizzle-orm/pg-core';
 import { baseEntityFields } from '@/core/database.schema';
 
-// Note: In monobase, we use 'person' module instead of separate patient/provider modules
-// Participants are referenced by person ID in the persons table
+// Participants are referenced by person ID in the persons table.
 
 // Enums for chat room and message status
 export const chatRoomStatusEnum = pgEnum('chat_room_status', [
@@ -101,7 +98,7 @@ export const chatMessages = pgTable('chat_message', {
     .references(() => chatRooms.id, { onDelete: 'cascade' }),
   
   sender: uuid('sender_id')
-    .notNull(), // Can be patient or provider
+    .notNull(),
   
   timestamp: timestamp('timestamp')
     .notNull()

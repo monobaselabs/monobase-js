@@ -75,9 +75,9 @@ describe('PersonalInfoForm', () => {
 
   test('handles role-specific rendering', () => {
     const onSubmit = () => {}
-    render(<PersonalInfoForm onSubmit={onSubmit} role="provider" />)
+    render(<PersonalInfoForm onSubmit={onSubmit} role="host" />)
 
-    // Form should render with provider context
+    // Form should render with host context
     expect(screen.getByLabelText(/first name/i)).toBeDefined()
   })
 

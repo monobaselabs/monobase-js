@@ -7,7 +7,9 @@
 import { eq, and, or, lte, gte, isNull, sql, type SQL } from 'drizzle-orm';
 import type { DatabaseInstance } from '@/core/database';
 import { DatabaseRepository, type PaginationOptions } from '@/core/database.repo';
-import { ConflictError } from '@/core/errors';
+import type {
+  DayOfWeek
+} from './booking.schema';
 import {
   bookingEvents,
   type BookingEvent,
@@ -15,10 +17,7 @@ import {
   type BookingEventCreateRequest,
   type BookingEventUpdateRequest,
   type DailyConfig,
-  type TimeBlock,
-  type FormConfig,
-  type BillingConfig,
-  DayOfWeek
+  type TimeBlock
 } from './booking.schema';
 import { persons } from '../../person/repos/person.schema';
 

@@ -4,9 +4,7 @@ import type { DatabaseInstance } from '@/core/database';
 import type { User } from '@/types/auth';
 import {
   ForbiddenError,
-  NotFoundError,
-  ValidationError,
-  BusinessLogicError
+  NotFoundError
 } from '@/core/errors';
 import { ScheduleExceptionRepository } from './repos/scheduleException.repo';
 

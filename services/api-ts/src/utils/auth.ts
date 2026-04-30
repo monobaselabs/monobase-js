@@ -1,10 +1,10 @@
 /**
  * Auth utility functions for Monobase Application Platform
- * User role management and access control utilities
+ * User role management helpers used by handlers and the boot path.
  */
 
 import { createAccessControl } from 'better-auth/plugins/access';
-import { betterAuth } from 'better-auth';
+import type { betterAuth } from 'better-auth';
 import type { DatabaseInstance } from '@/core/database';
 import { user } from '@/generated/better-auth/schema';
 import { eq } from 'drizzle-orm';
@@ -13,47 +13,12 @@ import { eq } from 'drizzle-orm';
 export type AuthInstance = ReturnType<typeof betterAuth>;
 
 /**
- * Access control definitions for healthcare platform
- * Use 'as const' for proper type inference
+ * Better-Auth admin-plugin access controller. The contract surface uses
+ * `x-security-required-roles` (TypeSpec) + authMiddleware({ roles }) for
+ * gating, so this controller intentionally declares no statements — it
+ * exists only to satisfy the admin plugin's signature.
  */
-const accessControlStatements = {
-  patient: [
-    'patient:read',
-    'patient:update',
-    'patient:consent:manage',
-    'communication:send',
-    'communication:read',
-    'file:upload',
-    'file:read'
-  ],
-  provider: [
-    'provider:read',
-    'provider:update',
-    'patient:read',
-    'patient:search',
-    'communication:send',
-    'communication:read',
-    'file:upload',
-    'file:read',
-    'file:download'
-  ],
-  admin: [
-    'admin:read',
-    'admin:update',
-    'patient:*',
-    'provider:*',
-    'communication:*',
-    'file:*',
-    'audit:read',
-    'system:manage',
-    'user:impersonate'
-  ]
-} as const;
-
-export const ac = createAccessControl(accessControlStatements);
-
-// Export permission arrays for testing and type checking
-export const permissionStatements = accessControlStatements;
+export const ac = createAccessControl({});
 
 /**
  * Check if a user has one or more roles

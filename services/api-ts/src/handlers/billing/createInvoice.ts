@@ -63,7 +63,7 @@ export async function createInvoice(
   const personRepo = new PersonRepository(database, logger);
   
 
-  // Check provider exists and user has access
+  // Check the merchant account exists and user has access
   const merchantPerson = await personRepo.findOneById(merchant);
   if (!merchantPerson) {
     throw new NotFoundError('Merchant person not found', {
@@ -73,7 +73,7 @@ export async function createInvoice(
     });
   }
 
-  // Check patient exists
+  // Check customer person exists
   const customerPerson = await personRepo.findOneById(customer);
   if (!customerPerson) {
     throw new NotFoundError('Customer person not found', {

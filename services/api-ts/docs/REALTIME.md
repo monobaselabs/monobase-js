@@ -30,9 +30,9 @@ Global connection for user-specific events.
 - `connected` - Connection confirmation with `{ userId, timestamp }`
 - `pong` - Heartbeat response with `{ timestamp }`
 - `notification.new` - New notification created with `{ id, type, title, message, relatedEntityType, relatedEntity, createdAt }`
-- `appointment.confirmed` - Appointment confirmed with `{ appointmentId, providerId, confirmedAt }`
-- `appointment.cancelled` - Appointment cancelled with `{ appointmentId, cancelledBy, reason, cancelledAt }`
-- `appointment.rejected` - Appointment rejected with `{ appointmentId, providerId, reason, rejectedAt }`
+- `booking.confirmed` - Booking confirmed with `{ bookingId, hostId, confirmedAt }`
+- `booking.cancelled` - Booking cancelled with `{ bookingId, cancelledBy, reason, cancelledAt }`
+- `booking.rejected` - Booking rejected with `{ bookingId, hostId, reason, rejectedAt }`
 
 **Example**:
 ```typescript

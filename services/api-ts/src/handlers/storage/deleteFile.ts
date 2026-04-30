@@ -2,11 +2,9 @@ import type { BaseContext } from '@/types/app';
 import type { DatabaseInstance } from '@/core/database';
 import type { User } from '@/types/auth';
 import {
-  UnauthorizedError,
   ForbiddenError,
   NotFoundError,
-  ValidationError,
-  BusinessLogicError
+  ValidationError
 } from '@/core/errors';
 import type { StorageProvider } from '@/core/storage';
 import { StorageFileRepository } from './repos/file.repo';
@@ -68,7 +66,7 @@ export async function deleteFile(
     try {
       const auditEntry = await audit.logEvent({
         eventType: 'data-modification',
-        category: 'hipaa',
+        category: 'privacy',
         action: 'delete',
         outcome: 'success',
         user: user.id,

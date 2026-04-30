@@ -5,7 +5,6 @@ import type { User, Session } from '@/types/auth';
 import { 
   ForbiddenError,
   NotFoundError,
-  ValidationError,
 } from '@/core/errors';
 import { EmailTemplateRepository } from './repos/template.repo';
 import type { TemplateVariable } from './repos/email.schema';

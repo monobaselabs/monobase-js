@@ -2,11 +2,8 @@ import type { ValidatedContext } from '@/types/app';
 import type { ListChatRoomsQuery } from '@/generated/openapi/validators';
 import type { DatabaseInstance } from '@/core/database';
 import type { User } from '@/types/auth';
-import { 
-  ForbiddenError,
-  NotFoundError,
-  ValidationError,
-  BusinessLogicError
+import {
+  ValidationError
 } from '@/core/errors';
 import { ChatRoomRepository } from './repos/chatRoom.repo';
 import type { ChatRoomFilters } from './repos/comms.schema';

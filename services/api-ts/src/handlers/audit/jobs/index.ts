@@ -22,7 +22,7 @@ export function registerAuditJobs(scheduler: JobScheduler): void {
       const archivedCount = await auditRepo.archiveOldLogs(365);
       logger.info({ jobId, archivedCount }, `Archived ${archivedCount} audit logs older than 1 year`);
       
-      // Purge logs older than 7 years (2555 days - HIPAA compliance)
+      // Purge logs older than 7 years (2555 days - common regulatory retention)
       const purgedCount = await auditRepo.purgeArchivedLogs(2555);
       logger.info({ jobId, purgedCount }, `Purged ${purgedCount} audit logs older than 7 years`);
       

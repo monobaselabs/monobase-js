@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarIcon, Camera, Loader2, X } from 'lucide-react'
-import { format, isAfter, isBefore } from 'date-fns'
+import { isAfter, isBefore } from 'date-fns'
 import { formatDate } from '@/lib/format-date'
 import { Button } from '@/components/button'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/form'
@@ -25,7 +25,7 @@ interface PersonalInfoFormProps {
   /**
    * Role-specific context for form customization
    */
-  role?: 'patient' | 'provider'
+  role?: 'client' | 'host'
   /**
    * Custom submit button text
    */
@@ -54,7 +54,7 @@ export function PersonalInfoForm({
   mode = 'create',
   showButtons = true,
   onCancel,
-  role = 'patient',
+  role = 'client',
   submitText,
   formId,
   showAvatar = mode === 'edit',
@@ -184,7 +184,7 @@ export function PersonalInfoForm({
   const getDefaultSubmitText = () => {
     if (submitText) return submitText
     if (mode === 'create') {
-      return role === 'provider' ? 'Continue Setup' : 'Continue'
+      return role === 'host' ? 'Continue Setup' : 'Continue'
     }
     return 'Save Changes'
   }

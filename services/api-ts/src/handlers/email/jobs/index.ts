@@ -4,8 +4,6 @@
  */
 
 import type { JobScheduler, JobContext } from '@/core/jobs';
-import type { DatabaseInstance } from '@/core/database';
-import type { Logger } from '@/types/logger';
 import type { EmailService } from '@/core/email';
 
 /**

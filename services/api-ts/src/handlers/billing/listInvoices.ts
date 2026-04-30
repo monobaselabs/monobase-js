@@ -7,10 +7,9 @@
 
 import type { ValidatedContext } from '@/types/app';
 import type { ListInvoicesQuery } from '@/generated/openapi/validators';
-import { ForbiddenError } from '@/core/errors';
 import type { Session } from '@/types/auth';
 import { InvoiceRepository, type InvoiceFilters } from './repos/billing.repo';
-import { parsePagination, buildPaginationMeta, parseFilters } from '@/utils/query';
+import { parsePagination, buildPaginationMeta } from '@/utils/query';
 
 /**
  * listInvoices

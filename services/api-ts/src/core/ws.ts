@@ -11,7 +11,7 @@
  * Channels should be namespaced by resource type to avoid conflicts:
  * - `chat-rooms/${roomId}` for chat room channels
  * - `notifications/${userId}` for user notification channels
- * - `consultations/${consultationId}` for consultation channels
+ * - `bookings/${bookingId}` for booking event channels
  */
 
 import { createBunWebSocket } from 'hono/bun';

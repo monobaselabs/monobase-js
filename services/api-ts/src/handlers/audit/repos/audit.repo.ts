@@ -1,12 +1,12 @@
 /**
  * AuditRepository - Data access layer for audit logs
- * Provides HIPAA-compliant audit trail management with integrity verification
+ * Provides tamper-evident audit trail management with integrity verification
  */
 
-import { eq, and, or, gte, lte, inArray, type SQL } from 'drizzle-orm';
+import { eq, and, gte, lte, type SQL } from 'drizzle-orm';
 import { createHash } from 'crypto';
 import type { DatabaseInstance } from '@/core/database';
-import { DatabaseRepository, type PaginationOptions } from '@/core/database.repo';
+import { DatabaseRepository } from '@/core/database.repo';
 import { SYSTEM_USER_ID } from '@/core/constants';
 import { subDays, addYears } from 'date-fns';
 import {
@@ -14,15 +14,8 @@ import {
   type AuditLogEntry,
   type NewAuditLogEntry,
   type CreateAuditLogRequest,
-  type AuditLogFilters,
-  type AuditEventType,
-  type AuditCategory,
-  type AuditAction,
-  type AuditOutcome,
-  type AuditRetentionStatus,
-  type UserType
+  type AuditLogFilters
 } from './audit.schema';
-import type { User } from '@/types/auth';
 
 export class AuditRepository extends DatabaseRepository<AuditLogEntry, NewAuditLogEntry, AuditLogFilters> {
   constructor(
@@ -118,7 +111,7 @@ export class AuditRepository extends DatabaseRepository<AuditLogEntry, NewAuditL
     
     const integrityHash = this.calculateIntegrityHash(integrityData);
     
-    // Calculate purge date (7 years for HIPAA compliance)
+    // Calculate purge date (7 years - common regulatory retention)
     const purgeAfter = addYears(new Date(), 7);
 
     const auditData: NewAuditLogEntry = {
@@ -218,7 +211,7 @@ export class AuditRepository extends DatabaseRepository<AuditLogEntry, NewAuditL
 
   /**
    * Archive old audit logs (background job method)
-   * Moves logs from active to archived status after specified days (default: 365 days for HIPAA)
+   * Moves logs from active to archived status after specified days (default: 365 days - common regulatory retention)
    */
   async archiveOldLogs(daysOld: number = 365, archivedBy?: string): Promise<number> {
     this.logger?.debug({ daysOld, archivedBy }, 'Starting log archival process');
@@ -253,7 +246,7 @@ export class AuditRepository extends DatabaseRepository<AuditLogEntry, NewAuditL
 
   /**
    * Purge archived audit logs (background job method)
-   * Permanently deletes logs with 'pending-purge' status older than specified days (default: 2555 days = 7 years for HIPAA)
+   * Permanently deletes logs with 'pending-purge' status older than specified days (default: 2555 days = 7 years - common regulatory retention)
    */
   async purgeArchivedLogs(daysOld: number = 2555): Promise<number> {
     this.logger?.debug({ daysOld }, 'Starting log purge process');

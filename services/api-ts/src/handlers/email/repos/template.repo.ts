@@ -3,9 +3,9 @@
  * Handles template CRUD operations, caching, and version management
  */
 
-import { eq, and, or, isNull, sql, type SQL } from 'drizzle-orm';
+import { eq, and, sql, type SQL } from 'drizzle-orm';
 import type { DatabaseInstance } from '@/core/database';
-import { DatabaseRepository, type PaginationOptions, type PaginatedResult } from '@/core/database.repo';
+import { DatabaseRepository } from '@/core/database.repo';
 import { 
   emailTemplates, 
   type EmailTemplate, 
@@ -14,7 +14,7 @@ import {
   type TemplatePreviewResult,
   type TemplateVariable
 } from './email.schema';
-import { ValidationError, NotFoundError, ConflictError } from '@/core/errors';
+import { ValidationError, NotFoundError } from '@/core/errors';
 import Handlebars from 'handlebars';
 import { format } from 'date-fns';
 

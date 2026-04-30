@@ -4,11 +4,8 @@ import type { User } from '@/types/auth';
 import {
   ForbiddenError,
   NotFoundError,
-  ValidationError,
-  BusinessLogicError,
-  UnauthorizedError
+  ValidationError
 } from '@/core/errors';
-import { type StoredFile } from './repos/file.schema';
 import type { StorageProvider } from '@/core/storage';
 import { StorageFileRepository } from './repos/file.repo';
 import { userHasRole } from '@/utils/auth';
@@ -77,7 +74,7 @@ export async function getFile(
     try {
       const auditEntry = await audit.logEvent({
         eventType: 'data-access',
-        category: 'hipaa',
+        category: 'privacy',
         action: 'read',
         outcome: 'success',
         user: user.id,

@@ -7,7 +7,7 @@ import type { JobContext } from '@/core/jobs';
 import { TimeSlotRepository } from '../repos/timeSlot.repo';
 import { BookingEventRepository } from '../repos/bookingEvent.repo';
 import { ScheduleExceptionRepository } from '../repos/scheduleException.repo';
-import type { BookingEvent, DailyConfig, TimeBlock, NewTimeSlot, ScheduleException } from '../repos/booking.schema';
+import type { BookingEvent, TimeBlock, NewTimeSlot, ScheduleException } from '../repos/booking.schema';
 import { timeSlots, DayOfWeek } from '../repos/booking.schema';
 import { eq, and, gte } from 'drizzle-orm';
 import { addDays, startOfDay, format, getDay, eachDayOfInterval, parseISO, setHours, setMinutes, addMinutes, areIntervalsOverlapping } from 'date-fns';
