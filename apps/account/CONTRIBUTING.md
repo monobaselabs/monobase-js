@@ -23,7 +23,7 @@ This guide covers account app-specific development details. **For shared fronten
 - Push notifications (OneSignal integration)
 - Responsive UI (shadcn/ui + Tailwind CSS)
 
-**API Integration**: Uses `@monobase/sdk` package for type-safe backend communication
+**API Integration**: Uses `@monobase/sdk-ts` package for type-safe backend communication
 
 **Port**: 3002 (development)
 
@@ -36,7 +36,7 @@ This guide covers account app-specific development details. **For shared fronten
 - **State**: TanStack Query v5, React Hook Form
 - **UI**: shadcn/ui + Tailwind CSS + Radix UI
 - **Auth**: Better-Auth (cookie-based sessions)
-- **SDK**: `@monobase/sdk` (type-safe API client)
+- **SDK**: `@monobase/sdk-ts` (type-safe API client)
 
 **For detailed patterns and conventions**, see [Root CONTRIBUTING.md > Frontend Development Patterns](../../CONTRIBUTING.md#frontend-development-patterns).
 
@@ -175,12 +175,12 @@ bun run test:e2e:debug  # Debug tests
 
 ## API Integration
 
-This app uses the `@monobase/sdk` package for API communication.
+This app uses the `@monobase/sdk-ts` package for API communication.
 
 ### Using the SDK
 
 ```typescript
-import { createClient } from '@monobase/sdk'
+import { createClient } from '@monobase/sdk-ts'
 
 // Create client instance
 const client = createClient({

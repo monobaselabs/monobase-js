@@ -14,7 +14,7 @@ import {
 } from 'lucide-react'
 import { UserButton } from '@daveyplate/better-auth-ui'
 import { useQuery } from '@tanstack/react-query'
-import { listNotificationsOptions } from '@monobase/sdk/generated/@tanstack/react-query.gen'
+import { listNotificationsOptions } from '@monobase/sdk-ts/generated/@tanstack/react-query.gen'
 
 export const Route = createFileRoute('/_dashboard')({
   beforeLoad: composeGuards(requireAuth, requireEmailVerified, requirePerson),

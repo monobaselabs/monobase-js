@@ -22,9 +22,9 @@ import {
   listNotificationsQueryKey,
   markNotificationAsReadMutation,
   markAllNotificationsAsReadMutation,
-} from '@monobase/sdk/generated/@tanstack/react-query.gen'
-import { useOptimisticMutation } from '@monobase/sdk/react/use-optimistic-mutation'
-import type { ListNotificationsResponse } from '@monobase/sdk/generated/types.gen'
+} from '@monobase/sdk-ts/generated/@tanstack/react-query.gen'
+import { useOptimisticMutation } from '@monobase/sdk-ts/react/use-optimistic-mutation'
+import type { ListNotificationsResponse } from '@monobase/sdk-ts/generated/types.gen'
 import { useFormatDate } from '@/hooks/use-format-date'
 import { Button } from "@/components/button"
 import { 

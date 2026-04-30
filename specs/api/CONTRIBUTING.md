@@ -491,7 +491,7 @@ bun run clean         # Clean dist/
 
 1. **Define models** in TypeSpec
 2. **Run build** to generate OpenAPI + types
-3. **Implement handlers** in services/api
+3. **Implement handlers** in services/api-ts
 4. **Use types** in frontend apps
 
 ### File Organization

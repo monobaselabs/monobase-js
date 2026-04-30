@@ -38,7 +38,7 @@ createdb monobase
 
 Each service/app requires its own `.env` file:
 
-**API Service** (`services/api/.env`):
+**API Service** (`services/api-ts/.env`):
 ```bash
 DATABASE_URL=postgresql://user:password@localhost:5432/monobase
 PORT=7213
@@ -56,7 +56,7 @@ VITE_API_URL=http://localhost:7213
 ### 3. Database Initialization
 
 ```bash
-cd services/api
+cd services/api-ts
 bun run db:generate  # Generate initial schema
 ```
 
@@ -64,7 +64,7 @@ bun run db:generate  # Generate initial schema
 
 ```bash
 # Start API service
-cd services/api && bun dev
+cd services/api-ts && bun dev
 
 # In another terminal, start account app
 cd apps/account && bun dev
@@ -180,10 +180,10 @@ This generates:
 
 #### 3. Implement Backend Handler
 
-Create or update the handler in `services/api/src/handlers/`:
+Create or update the handler in `services/api-ts/src/handlers/`:
 
 ```typescript
-// services/api/src/handlers/person.ts
+// services/api-ts/src/handlers/person.ts
 import { Hono } from 'hono';
 import { z } from 'zod';
 import type { Person } from '@monobase/api-spec';
@@ -239,7 +239,7 @@ export async function createPerson(data: CreatePersonRequest): Promise<Person> {
 
 ### Generated Files (Never Edit)
 
-Running `cd services/api && bun run generate` creates these files automatically:
+Running `cd services/api-ts && bun run generate` creates these files automatically:
 
 #### 1. OpenAPI Code (`src/generated/openapi/`)
 - **`types.ts`** - TypeScript types (re-exported from `@monobase/api-spec`)
@@ -310,7 +310,7 @@ vim specs/api/src/modules/booking.tsp
 cd specs/api && bun run build
 
 # 3. Generate API code (routes, validators, handlers)
-cd ../../services/api && bun run generate
+cd ../../services/api-ts && bun run generate
 
 # 4. Implement business logic in handlers
 vim src/handlers/booking/createBooking.ts
@@ -339,7 +339,7 @@ The generation script (`scripts/generate.ts`):
 **Solution**:
 ```bash
 cd specs/api && bun run build  # Regenerate OpenAPI
-cd ../../services/api && bun run generate  # Regenerate routes
+cd ../../services/api-ts && bun run generate  # Regenerate routes
 ```
 
 **Problem**: Handler not found error
@@ -470,7 +470,7 @@ The Monobase platform uses different logging approaches for backend and frontend
 
 **Technology**: [Pino](https://getpino.io/) for structured, high-performance logging
 
-**Location**: `/services/api/src/core/logger.ts`
+**Location**: `/services/api-ts/src/core/logger.ts`
 
 **Usage**:
 ```typescript
@@ -915,7 +915,7 @@ const language = 'EN'  // ❌ uppercase language
 - Zod validators reject invalid formats at runtime
 - Returns 400 error for casing violations
 
-**Test Coverage** (`services/api/tests/e2e/person/person.test.ts`):
+**Test Coverage** (`services/api-ts/tests/e2e/person/person.test.ts`):
 - "International Data Validation" suite tests casing enforcement
 - Validates rejection of incorrect formats
 - Ensures acceptance of correct formats
@@ -927,7 +927,7 @@ Each business module follows a consistent structure for maintainability:
 ### Backend Module Structure
 
 ```
-services/api/src/handlers/person/
+services/api-ts/src/handlers/person/
 ├── createPerson.ts         # Handler: Create person
 ├── getPerson.ts            # Handler: Get person by ID
 ├── updatePerson.ts         # Handler: Update person
@@ -1051,7 +1051,7 @@ export const clients = pgTable('clients', {
 
 1. **Modify Drizzle Schema**:
 ```typescript
-// services/api/src/core/database.schema.ts
+// services/api-ts/src/core/database.schema.ts
 export const persons = pgTable('persons', {
   id: uuid('id').defaultRandom().primaryKey(),
   firstName: text('first_name').notNull(),
@@ -1065,7 +1065,7 @@ export const persons = pgTable('persons', {
 
 2. **Generate Migration**:
 ```bash
-cd services/api
+cd services/api-ts
 bun run db:generate
 ```
 
@@ -1085,7 +1085,7 @@ bun run db:migrate
 Use Drizzle Studio for visual database exploration:
 
 ```bash
-cd services/api
+cd services/api-ts
 bun run db:studio
 ```
 
@@ -1366,7 +1366,7 @@ export async function signInAsUser(page: Page, email: string, password: string) 
 ### Unit Tests (API Service)
 
 ```bash
-cd services/api
+cd services/api-ts
 bun test
 ```
 
@@ -1378,7 +1378,7 @@ Write tests for:
 
 **Example Test**:
 ```typescript
-// services/api/src/handlers/client/__tests__/service.test.ts
+// services/api-ts/src/handlers/client/__tests__/service.test.ts
 import { describe, test, expect } from 'bun:test';
 import { ClientService } from '../service';
 
@@ -1437,7 +1437,7 @@ Always run type checking before committing:
 
 ```bash
 # Check API service
-cd services/api && bun run typecheck
+cd services/api-ts && bun run typecheck
 
 # Check account app
 cd apps/account && bun run typecheck
@@ -1706,7 +1706,7 @@ Before requesting review:
 
 **Enable Debug Logging**:
 ```typescript
-// services/api/src/utils/logger.ts
+// services/api-ts/src/utils/logger.ts
 export const logger = pino({
   level: process.env.LOG_LEVEL || 'debug', // Set to 'debug'
 });
@@ -1798,7 +1798,7 @@ bun dev
 
 **Drizzle Studio**:
 ```bash
-cd services/api
+cd services/api-ts
 bun run db:studio
 # Opens http://localhost:4983
 ```
@@ -1823,7 +1823,7 @@ SELECT * FROM clients LIMIT 10;
 # Reset database (CAUTION: deletes all data)
 dropdb monobase
 createdb monobase
-cd services/api
+cd services/api-ts
 bun run db:generate
 ```
 

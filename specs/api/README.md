@@ -126,7 +126,7 @@ For detailed development guidelines, patterns, and best practices, see [CONTRIBU
 **Before implementing API features:**
 1. Define endpoints in TypeSpec (`src/modules/`)
 2. Run `bun run build` to generate OpenAPI + types
-3. Implement backend handlers in `services/api/`
+3. Implement backend handlers in `services/api-ts/`
 4. Use generated types in frontend apps
 
 **For complete API-First workflow**, see [Root CONTRIBUTING.md > API-First Development](../../CONTRIBUTING.md#api-first-development).

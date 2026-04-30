@@ -63,7 +63,7 @@ export interface MerchantAccountFormProps {
  * @example
  * ```tsx
  * import { MerchantAccountSetup } from '@/features/billing/components/merchant-account-setup'
- * import { useMyMerchantAccount, useMyMerchantAccountStatus } from '@monobase/sdk/react/hooks/use-billing'
+ * import { useMyMerchantAccount, useMyMerchantAccountStatus } from '@monobase/sdk-ts/react/hooks/use-billing'
  * 
  * function OnboardingPage() {
  *   const { data: account, isLoading } = useMyMerchantAccount()

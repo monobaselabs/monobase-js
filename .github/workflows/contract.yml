@@ -1,0 +1,113 @@
+name: Contract Tests
+
+# Spec-first contract tests. Two layers:
+#   1. Hurl scenarios under specs/api/tests/contract/ — required check.
+#   2. Schemathesis schema fuzzing — shadow check (allowed to fail).
+#
+# Both run against whichever HTTP implementation is booted on $API_URL,
+# so the same workflow can be retargeted at a Rust impl, a remote staging
+# environment, etc., by swapping the boot step.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: monobase
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres -d monobase"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+      minio:
+        image: minio/minio:latest
+        ports: ['9000:9000']
+        env:
+          MINIO_ROOT_USER: minioadmin
+          MINIO_ROOT_PASSWORD: minioadmin
+        options: >-
+          --health-cmd "curl -fsS http://localhost:9000/minio/health/live"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+
+    env:
+      DATABASE_URL: postgresql://postgres:password@localhost:5432/monobase
+      PORT: 7213
+      API_URL: http://localhost:7213
+      AUTH_SECRET: contract-test-secret-do-not-use-in-prod
+      STORAGE_PROVIDER: minio
+      STORAGE_ENDPOINT: http://localhost:9000
+      STORAGE_BUCKET: monobase-files
+      STORAGE_ACCESS_KEY_ID: minioadmin
+      STORAGE_SECRET_ACCESS_KEY: minioadmin
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.2.21
+
+      - name: Install Hurl
+        run: |
+          curl -fsSL -o /tmp/hurl.deb \
+            https://github.com/Orange-OpenSource/hurl/releases/download/6.0.0/hurl_6.0.0_amd64.deb
+          sudo dpkg -i /tmp/hurl.deb
+
+      - name: Install Schemathesis
+        run: pipx install schemathesis
+
+      - name: Install workspace deps
+        run: bun install --frozen-lockfile
+
+      - name: Build the OpenAPI spec
+        run: bun --filter @monobase/api-spec run build
+
+      # ----- Implementation under test: services/api-ts (TypeScript) -----
+      # Swap this step when testing a different impl (e.g. services/api-rs).
+
+      - name: Generate API codegen
+        run: bun --filter @monobase/api-ts run generate
+
+      - name: Boot the implementation
+        run: |
+          cd services/api-ts
+          bun dev > /tmp/api.log 2>&1 &
+          echo $! > /tmp/api.pid
+
+      - name: Wait for /livez
+        run: |
+          for i in {1..60}; do
+            curl -fsS "$API_URL/livez" && exit 0
+            sleep 1
+          done
+          echo "API never became ready"
+          tail -200 /tmp/api.log
+          exit 1
+
+      # ----- Contract checks -----
+
+      - name: Hurl contract scenarios
+        run: bun run test:contract
+
+      - name: Schemathesis fuzz (shadow)
+        continue-on-error: true
+        run: bun run test:contract:fuzz
+
+      - name: API logs (always)
+        if: always()
+        run: tail -500 /tmp/api.log || true
+
+      - name: Stop the implementation
+        if: always()
+        run: kill "$(cat /tmp/api.pid)" || true

@@ -3,13 +3,13 @@
  *
  * These are view models — flatter and friendlier than the raw OpenAPI shapes
  * for what a UI actually needs (e.g. a host's display name, a slot grouped
- * by date). Routes are responsible for adapting `@monobase/sdk/generated`
+ * by date). Routes are responsible for adapting `@monobase/sdk-ts/generated`
  * types to these before passing them into widgets.
  */
 
-import type { BookingEvent, LocationType } from '@monobase/sdk/generated/types.gen'
+import type { BookingEvent, LocationType } from '@monobase/sdk-ts/generated/types.gen'
 
-export type { BookingEvent } from '@monobase/sdk/generated/types.gen'
+export type { BookingEvent } from '@monobase/sdk-ts/generated/types.gen'
 
 /**
  * Display-shaped time slot. Keeps `date` separate from `startTime` so the

@@ -1,11 +1,11 @@
-# `@monobase/sdk`
+# `@monobase/sdk-ts`
 
 Type-safe frontend SDK for the Monobase Application Platform. The bulk of the SDK is auto-generated from `@monobase/api-spec` (TypeSpec → OpenAPI). On top of that we ship a thin layer for cross-cutting concerns: a Tauri-aware fetch, a `MutationCache`-backed toast convention, an optimistic-mutation helper, a typed PATCH builder, and named multi-step workflows.
 
 ## Architecture
 
 ```
-packages/sdk/src/
+packages/sdk-ts/src/
 ├── client.ts                       Runtime config for the generated client
 │                                   - bootstraps baseUrl + custom fetch
 │                                   - exports SdkError + errorInterceptor
@@ -37,7 +37,7 @@ The generated layer is regenerated whenever the OpenAPI spec changes. Everything
 ## Setup
 
 ```tsx
-import { ApiProvider } from '@monobase/sdk/react/provider'
+import { ApiProvider } from '@monobase/sdk-ts/react/provider'
 import { toast } from 'sonner'
 
 function App() {
@@ -61,7 +61,7 @@ function App() {
 
 ```bash
 cd specs/api && bun run build              # TypeSpec → openapi.json
-cd ../../packages/sdk && bun run generate  # OpenAPI → src/generated/
+cd ../../packages/sdk-ts && bun run generate  # OpenAPI → src/generated/
 ```
 
 Output (gitignored, regenerate per branch):
@@ -76,7 +76,7 @@ Output (gitignored, regenerate per branch):
 ### Direct calls
 
 ```ts
-import { getPerson, listBookings } from '@monobase/sdk/generated'
+import { getPerson, listBookings } from '@monobase/sdk-ts/generated'
 
 const { data: me } = await getPerson({ path: { person: 'me' }, throwOnError: true })
 const { data: bookings } = await listBookings({ query: { status: 'confirmed' }, throwOnError: true })
@@ -86,7 +86,7 @@ const { data: bookings } = await listBookings({ query: { status: 'confirmed' }, 
 
 ```tsx
 import { useQuery } from '@tanstack/react-query'
-import { listNotificationsOptions } from '@monobase/sdk/generated/@tanstack/react-query.gen'
+import { listNotificationsOptions } from '@monobase/sdk-ts/generated/@tanstack/react-query.gen'
 
 function Bell() {
   const { data } = useQuery({
@@ -101,7 +101,7 @@ function Bell() {
 
 ```tsx
 import { useMutation } from '@tanstack/react-query'
-import { createPersonMutation } from '@monobase/sdk/generated/@tanstack/react-query.gen'
+import { createPersonMutation } from '@monobase/sdk-ts/generated/@tanstack/react-query.gen'
 
 const create = useMutation({
   ...createPersonMutation(),
@@ -122,8 +122,8 @@ const create = useMutation({
 import {
   markNotificationAsReadMutation,
   listNotificationsQueryKey,
-} from '@monobase/sdk/generated/@tanstack/react-query.gen'
-import { useOptimisticMutation } from '@monobase/sdk/react/use-optimistic-mutation'
+} from '@monobase/sdk-ts/generated/@tanstack/react-query.gen'
+import { useOptimisticMutation } from '@monobase/sdk-ts/react/use-optimistic-mutation'
 
 const markRead = useOptimisticMutation(markNotificationAsReadMutation(), {
   optimistic: {
@@ -148,8 +148,8 @@ The helper handles snapshot, rollback on error, and post-settle invalidation.
 ### Type-safe partial updates
 
 ```ts
-import { buildPatch } from '@monobase/sdk/utils/patch'
-import type { PersonUpdateRequest } from '@monobase/sdk/generated/types.gen'
+import { buildPatch } from '@monobase/sdk-ts/utils/patch'
+import type { PersonUpdateRequest } from '@monobase/sdk-ts/generated/types.gen'
 
 // `lastName` is `string | null` in the schema → null is allowed.
 // `firstName` is `string` → null is a compile error.
@@ -164,7 +164,7 @@ For React Hook Form: `useDirtyPatch` reads `formState.dirtyFields` and produces 
 ### Multi-step workflows
 
 ```tsx
-import { useFileUpload, startBillingOnboarding } from '@monobase/sdk/flows'
+import { useFileUpload, startBillingOnboarding } from '@monobase/sdk-ts/flows'
 
 // File upload (4-step S3 flow with progress)
 const { upload, isUploading, progress } = useFileUpload()
@@ -185,7 +185,7 @@ Each flow composes 2–4 generated calls plus (occasionally) a non-API side effe
 Authentication still uses Better-Auth (separate from the generated SDK).
 
 ```tsx
-import { useSession, useSignOut, useEmailVerification } from '@monobase/sdk/react/hooks/use-auth'
+import { useSession, useSignOut, useEmailVerification } from '@monobase/sdk-ts/react/hooks/use-auth'
 ```
 
 ## Errors
@@ -193,7 +193,7 @@ import { useSession, useSignOut, useEmailVerification } from '@monobase/sdk/reac
 Every non-2xx response is wrapped in an `SdkError` by the error interceptor:
 
 ```ts
-import { SdkError } from '@monobase/sdk/client'
+import { SdkError } from '@monobase/sdk-ts/client'
 
 try {
   await getPerson({ path: { person: 'me' }, throwOnError: true })

@@ -9,7 +9,7 @@ import { useMutation } from '@tanstack/react-query'
 import {
   createPersonMutation,
   getPersonQueryKey,
-} from '@monobase/sdk/generated/@tanstack/react-query.gen'
+} from '@monobase/sdk-ts/generated/@tanstack/react-query.gen'
 import { Logo } from '@/components/logo'
 import { composeGuards, requireAuth, requireEmailVerified, requireNoPerson } from '@/utils/guards'
 import { detectTimezone } from '@/lib/detect-timezone'
@@ -18,7 +18,7 @@ import { detectLanguage } from '@/lib/detect-language'
 import { PersonalInfoForm } from '@/features/person/components/personal-info-form'
 import { AddressForm } from '@/features/person/components/address-form'
 import type { PersonalInfo, OptionalAddress } from '@/features/person/schemas'
-import type { PersonCreateRequest } from '@monobase/sdk/generated/types.gen'
+import type { PersonCreateRequest } from '@monobase/sdk-ts/generated/types.gen'
 
 export const Route = createFileRoute('/onboarding')({
   beforeLoad: composeGuards(requireAuth, requireEmailVerified, requireNoPerson),

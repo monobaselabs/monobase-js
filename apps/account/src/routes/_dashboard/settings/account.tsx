@@ -9,10 +9,10 @@ import {
   getPersonOptions,
   getPersonQueryKey,
   updatePersonMutation,
-} from '@monobase/sdk/generated/@tanstack/react-query.gen'
-import { buildPatch } from '@monobase/sdk/utils/patch'
-import { useFileUpload } from '@monobase/sdk/flows'
-import type { PersonUpdateRequest } from '@monobase/sdk/generated/types.gen'
+} from '@monobase/sdk-ts/generated/@tanstack/react-query.gen'
+import { buildPatch } from '@monobase/sdk-ts/utils/patch'
+import { useFileUpload } from '@monobase/sdk-ts/flows'
+import type { PersonUpdateRequest } from '@monobase/sdk-ts/generated/types.gen'
 
 export const Route = createFileRoute('/_dashboard/settings/account')({
   component: AccountSettingsPage,

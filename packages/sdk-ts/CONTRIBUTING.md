@@ -1,4 +1,4 @@
-# Contributing to `@monobase/sdk`
+# Contributing to `@monobase/sdk-ts`
 
 Specific to this package. For general repo guidelines see the [main CONTRIBUTING.md](../../CONTRIBUTING.md).
 
@@ -18,10 +18,10 @@ $EDITOR specs/api/src/modules/<module>.tsp
 cd specs/api && bun run build
 
 # 3. Regenerate the backend
-cd ../../services/api && bun run generate
+cd ../../services/api-ts && bun run generate
 
 # 4. Regenerate the SDK
-cd ../../packages/sdk && bun run generate
+cd ../../packages/sdk-ts && bun run generate
 ```
 
 Generated artifacts in `src/generated/` are gitignored — regenerate after pulling.

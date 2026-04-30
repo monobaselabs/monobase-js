@@ -13,7 +13,9 @@
   "packageManager": "bun@1.2.21",
   "scripts": {
     "build": "bun run --filter '*' build",
-    "clean": "rm -rf node_modules bun.lock && find . -name 'node_modules' -type d -prune -exec rm -rf {} +"
+    "clean": "rm -rf node_modules bun.lock && find . -name 'node_modules' -type d -prune -exec rm -rf {} +",
+    "test:contract": "bun scripts/run-contract-tests.ts",
+    "test:contract:fuzz": "schemathesis run --base-url ${API_URL:-http://localhost:7213} specs/api/dist/openapi/openapi.json"
   },
   "engines": {
     "node": ">=18.0.0",

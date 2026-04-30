@@ -116,7 +116,7 @@ Missing query parameter:
 **Fix Strategy:** 
 1. Update TypeSpec schemas in `specs/api/src/modules/`
 2. Regenerate: `cd specs/api && bun run build`
-3. Regenerate routes: `cd services/api && bun run generate`
+3. Regenerate routes: `cd services/api-ts && bun run generate`
 4. Create public repository methods for protected access
 5. Remove invalid imports
 
@@ -215,7 +215,7 @@ handlers/notifs/listNotifications.ts
 **Actions:**
 1. Update TypeSpec schemas (see Category 2)
 2. Regenerate API specs: `cd specs/api && bun run build`
-3. Regenerate routes: `cd services/api && bun run generate`
+3. Regenerate routes: `cd services/api-ts && bun run generate`
 4. Fix repository protected access (5 files)
 5. Add explicit schema types (booking.schema.ts)
 6. Remove invalid imports (comms, email)
@@ -357,19 +357,19 @@ const amount = invoice.amount;
 
 ### Run Type Check
 ```bash
-cd services/api
+cd services/api-ts
 bun run typecheck
 ```
 
 ### Save Errors to File
 ```bash
-cd services/api
+cd services/api-ts
 bun run typecheck 2>&1 | tee /tmp/typecheck-errors.txt
 ```
 
 ### Count Errors
 ```bash
-cd services/api
+cd services/api-ts
 bun run typecheck 2>&1 | grep "error TS" | wc -l
 ```
 
@@ -380,13 +380,13 @@ cd specs/api
 bun run build
 
 # 2. Regenerate routes/validators from OpenAPI
-cd ../../services/api
+cd ../../services/api-ts
 bun run generate
 ```
 
 ### Run Full Build
 ```bash
-cd services/api
+cd services/api-ts
 bun run build
 ```
 
@@ -465,8 +465,8 @@ If these files have errors, fix the source (TypeSpec, schemas, or generator scri
 Always follow this workflow for API changes:
 1. Edit TypeSpec definitions in `specs/api/src/modules/`
 2. Generate OpenAPI: `cd specs/api && bun run build`
-3. Generate routes: `cd services/api && bun run generate`
-4. Implement handlers in `services/api/src/handlers/`
+3. Generate routes: `cd services/api-ts && bun run generate`
+4. Implement handlers in `services/api-ts/src/handlers/`
 5. Run typecheck: `bun run typecheck`
 
 ### Testing Strategy

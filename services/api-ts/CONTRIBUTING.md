@@ -669,7 +669,7 @@ See Better-Auth configuration for authentication rate limiting.
 
 ### Development Commands
 ```bash
-cd services/api
+cd services/api-ts
 
 bun run dev          # Start with hot reload
 bun run build        # Build for production

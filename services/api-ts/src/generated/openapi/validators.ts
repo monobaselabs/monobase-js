@@ -1139,7 +1139,7 @@ export const TimezoneIdSchema = z.string().regex(/^[A-Za-z_]+\/[A-Za-z_]+$/).ref
 
 export const UpdateInvoiceRequestSchema = z.object({
   paymentCaptureMethod: z.enum(["automatic", "manual"]).optional(),
-  paymentDueAt: z.string().datetime().transform((str) => new Date(str)).optional(),
+  paymentDueAt: z.union([z.string().datetime().transform((str) => new Date(str)), z.null()]).optional(),
   voidThresholdMinutes: z.number().int().optional(),
   lineItems: z.array(CreateLineItemRequestSchema).optional(),
   metadata: z.record(z.string(), z.unknown()).optional()

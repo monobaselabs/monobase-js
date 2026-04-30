@@ -11,7 +11,7 @@ This package provides standardized TypeScript configurations for different proje
 | Config | Purpose | Used By |
 |--------|---------|---------|
 | `base.json` | Base configuration with strict type checking and ES2022 target | Extended by all other configs |
-| `api.json` | Backend API services with decorator support | `services/api` |
+| `api.json` | Backend API services with decorator support | `services/api-ts` |
 | `app.json` | Frontend applications built with React | `apps/account` |
 
 ## Installation
@@ -65,7 +65,7 @@ For backend API services with decorator support:
 }
 ```
 
-**Example**: `services/api/tsconfig.json`
+**Example**: `services/api-ts/tsconfig.json`
 
 ## Configuration Details
 

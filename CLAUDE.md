@@ -7,6 +7,8 @@ This file provides AI-specific guidance for Claude Code when working with the Mo
 For detailed information, refer to:
 - **[README.md](./README.md)** - Project overview, installation, commands, technology stack
 - **[CONTRIBUTING.md](./CONTRIBUTING.md)** - Development workflows, coding standards, testing guidelines
+- **[specs/api/CONTRACT.md](./specs/api/CONTRACT.md)** - Wire-level API contract every implementation must satisfy
+- **[specs/api/IMPLEMENTING.md](./specs/api/IMPLEMENTING.md)** - Playbook for adding a new server impl or client SDK in any language
 
 ## Repository Overview
 
@@ -14,21 +16,30 @@ For detailed information, refer to:
 
 **Key Technologies**: Bun, PostgreSQL, Drizzle ORM, Hono API, TypeSpec, TanStack Router, Better-Auth, OneSignal, S3/MinIO
 
+**Spec-first, polyglot-ready monorepo.** The OpenAPI document at
+`specs/api/dist/openapi/openapi.json` is the single source of truth.
+Every server implementation and every client SDK is generated from it,
+and any language can have its own (`-ts`, `-rs`, `-go`, …) sibling
+workspace.
+
 **Monorepo Structure**:
 - `apps/` - Frontend applications:
   - `account/` - Vite + TanStack Router reference app (auth, profile, settings)
-- `services/api/` - Backend API service (Hono + Drizzle)
-- `specs/api/` - TypeSpec API definitions (compiled to OpenAPI + TypeScript types)
+- `services/api-ts/` - Reference TypeScript API impl (Hono + Drizzle)
+  - `services/api-rs/`, `services/api-go/` etc. would be siblings; documented in `specs/api/IMPLEMENTING.md` but not yet present
+- `specs/api/` - TypeSpec API definitions; compiled to OpenAPI + TypeScript types. Also home of the contract docs and Hurl contract tests under `tests/contract/`
 - `packages/` - Shared packages:
   - `eslint-config/` - Shared ESLint flat configs (`base`, `react`, `next`)
-  - `sdk/` - Type-safe API client + TanStack Query hooks
+  - `sdk-ts/` - Reference TypeScript client SDK (generated from OpenAPI via `@hey-api/openapi-ts`)
   - `typescript-config/` - Shared TypeScript configs
+- `scripts/run-contract-tests.ts` - Runs the Hurl contract suite against `$API_URL`
+- `.github/workflows/contract.yml` - CI: boots the impl, runs Hurl + Schemathesis
 
 ## Business Domain Modules
 
 The API service ships nine vertical-neutral handler modules. Build your product
 on top of these — add a `patient`, `tenant`, `student`, `merchant`, etc. module
-under `services/api/src/handlers/` for each domain you need.
+under `services/api-ts/src/handlers/` for each domain you need.
 
 1. **person** - User profile management and central PII safeguard
 2. **booking** - Generic time-based scheduling (hosts, slots, bookings, events)
@@ -71,26 +82,26 @@ Consent types on Person:
 Always follow this workflow:
 1. Define APIs in TypeSpec (`specs/api/src/modules/`)
 2. Generate OpenAPI + TypeScript types (`cd specs/api && bun run build`)
-3. Generate routes/validators/handlers (`cd services/api && bun run generate`)
-4. Implement handler business logic (`services/api/src/handlers/`)
+3. Generate routes/validators/handlers (`cd services/api-ts && bun run generate`)
+4. Implement handler business logic (`services/api-ts/src/handlers/`)
 5. Use generated types from `@monobase/api-spec` in frontends
 
 **Why**: Type safety across frontend/backend, single source of truth, auto-generated docs
 
 **⚠️ CRITICAL - Never Edit Generated Files**:
-- `services/api/src/generated/openapi/*` - Routes, validators, registry (regenerated every time)
-- `services/api/src/generated/better-auth/*` - Auth schema and specs
-- `services/api/src/generated/migrations/*` - Database migrations
+- `services/api-ts/src/generated/openapi/*` - Routes, validators, registry (regenerated every time)
+- `services/api-ts/src/generated/better-auth/*` - Auth schema and specs
+- `services/api-ts/src/generated/migrations/*` - Database migrations
 
 **✅ Only Edit**:
 - TypeSpec files (`specs/api/src/modules/*.tsp`)
-- Handler implementations (`services/api/src/handlers/{module}/*.ts`)
-- Database schemas (`services/api/src/handlers/{module}/repos/*.schema.ts`)
+- Handler implementations (`services/api-ts/src/handlers/{module}/*.ts`)
+- Database schemas (`services/api-ts/src/handlers/{module}/repos/*.schema.ts`)
 
 See [CONTRIBUTING.md#code-generation](./CONTRIBUTING.md#code-generation---do-not-edit) for complete details.
 
 ### Configuration Approach
-Environment variables are parsed into typed configuration objects (see `services/api/src/core/config.ts`). Not file-based configuration.
+Environment variables are parsed into typed configuration objects (see `services/api-ts/src/core/config.ts`). Not file-based configuration.
 
 ### OneSignal Multi-App Architecture
 OneSignal follows an **app-agnostic pattern** like other services (Storage, Email, Billing):
@@ -171,11 +182,11 @@ The canonical API reference is at: `specs/api/dist/openapi/openapi.json`
 - Use prepared statements for performance
 - Leverage type inference from schema definitions
 - Use transactions for multi-table operations
-- Reference existing patterns in `services/api/src/handlers/*/repos/`
+- Reference existing patterns in `services/api-ts/src/handlers/*/repos/`
 
 ### Migration Workflow
-1. Modify schema in `services/api/src/handlers/{module}/repos/*.schema.ts`
-2. Generate migration: `cd services/api && bun run db:generate`
+1. Modify schema in `services/api-ts/src/handlers/{module}/repos/*.schema.ts`
+2. Generate migration: `cd services/api-ts && bun run db:generate`
 3. Review generated SQL in `src/generated/migrations/`
 4. Migrations run automatically on server start
 
@@ -196,7 +207,7 @@ To scaffold a new app, copy `apps/account/` and update `package.json` name + `vi
 
 ## Testing Approach
 
-- **API**: Bun test framework (`cd services/api && bun test`)
+- **API**: Bun test framework (`cd services/api-ts && bun test`)
 - **Frontend**: Playwright E2E tests (`cd apps/account && bun run test:e2e`)
 - **Type Safety**: TypeScript checking across all workspaces
 
@@ -213,18 +224,18 @@ bun install
 
 # API-first workflow
 cd specs/api && bun run build              # Generate OpenAPI + types
-cd ../../services/api && bun run generate  # Generate routes/validators
+cd ../../services/api-ts && bun run generate  # Generate routes/validators
 
 # Start development
-cd services/api && bun dev        # API on port 7213
+cd services/api-ts && bun dev        # API on port 7213
 cd apps/account && bun dev        # Account app on port 3002
 
 # Database
-cd services/api && bun run db:generate  # Generate migration
-cd services/api && bun run db:studio    # Open Drizzle Studio
+cd services/api-ts && bun run db:generate  # Generate migration
+cd services/api-ts && bun run db:studio    # Open Drizzle Studio
 
 # Testing
-cd services/api && bun test             # API tests
+cd services/api-ts && bun test             # API tests
 cd apps/account && bun run test:e2e     # E2E tests
 ```
 
@@ -233,7 +244,7 @@ cd apps/account && bun run test:e2e     # E2E tests
 ### What Exists
 - ✅ **apps/account** - Reference Vite + TanStack Router app
 - ✅ **apps/account/src/components/** - Shared UI component library
-- ✅ **packages/sdk/** - Type-safe API client + TanStack Query hooks
+- ✅ **packages/sdk-ts/** - Type-safe API client + TanStack Query hooks
 - ✅ **packages/eslint-config/** - Shared ESLint flat configs
 - ✅ **Authentication** via Better-Auth (integrated, not a separate module)
 - ✅ **Consent** as JSONB fields on Person model (not a separate module)
@@ -241,11 +252,11 @@ cd apps/account && bun run test:e2e     # E2E tests
 
 ### What's Intentionally Absent
 - This template ships **no domain-vertical apps or modules**. Add your own
-  (e.g., `apps/admin`, `services/api/src/handlers/tenant/`) on top of the base.
+  (e.g., `apps/admin`, `services/api-ts/src/handlers/tenant/`) on top of the base.
 
 ## When in Doubt
 
 1. Check [README.md](./README.md) for commands and setup
 2. Check [CONTRIBUTING.md](./CONTRIBUTING.md) for development patterns
-3. Reference existing handlers in `services/api/src/handlers/` for implementation patterns
+3. Reference existing handlers in `services/api-ts/src/handlers/` for implementation patterns
 4. Check OpenAPI spec at `specs/api/dist/openapi/openapi.json` for API contracts

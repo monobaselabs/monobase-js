@@ -93,7 +93,7 @@ flowchart TD
         D[MediaDevices] --> A
     end
 
-    subgraph "Backend (services/api)"
+    subgraph "Backend (services/api-ts)"
         E[WebSocket Handler] --> F[ChatRoomRepository]
         E --> G[ChatMessageRepository]
         H[REST Handlers] --> F

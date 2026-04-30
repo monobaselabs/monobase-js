@@ -10,7 +10,7 @@ User-facing web application for the Monobase Application Platform. Built with mo
 - **State Management**: [TanStack Query v5](https://tanstack.com/query) - Server state and data fetching
 - **Forms**: [React Hook Form](https://react-hook-form.com) + [Zod 4.x](https://zod.dev) - Type-safe validation
 - **Auth**: [Better-Auth](https://better-auth.com) - Cookie-based authentication
-- **SDK**: `@monobase/sdk` - Type-safe API client for backend integration
+- **SDK**: `@monobase/sdk-ts` - Type-safe API client for backend integration
 
 ## Quick Start
 
@@ -83,10 +83,10 @@ src/
 
 ## API Integration
 
-This app uses the `@monobase/sdk` package for type-safe API integration:
+This app uses the `@monobase/sdk-ts` package for type-safe API integration:
 
 ```typescript
-import { createClient } from '@monobase/sdk'
+import { createClient } from '@monobase/sdk-ts'
 
 const client = createClient({
   baseURL: import.meta.env.VITE_API_URL

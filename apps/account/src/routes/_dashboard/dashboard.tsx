@@ -22,7 +22,7 @@ import {
 import { Badge } from "@/components/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/avatar"
 import { Separator } from "@/components/separator"
-import { useListSessions, useListPasskeys, useEmailVerification } from '@monobase/sdk/react/hooks/use-auth'
+import { useListSessions, useListPasskeys, useEmailVerification } from '@monobase/sdk-ts/react/hooks/use-auth'
 import { toast } from 'sonner'
 
 export const Route = createFileRoute('/_dashboard/dashboard')({

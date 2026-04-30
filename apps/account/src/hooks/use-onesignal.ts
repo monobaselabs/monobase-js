@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useSession } from '@monobase/sdk/react/hooks/use-auth'
+import { useSession } from '@monobase/sdk-ts/react/hooks/use-auth'
 import { setOneSignalUserId, clearOneSignalUserId } from '@/services/onesignal'
 
 /**

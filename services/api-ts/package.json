@@ -1,5 +1,5 @@
 {
-  "name": "@monobase/api",
+  "name": "@monobase/api-ts",
   "version": "0.1.0",
   "description": "Monobase Application Platform API Service",
   "type": "module",

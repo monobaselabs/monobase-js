@@ -15,7 +15,7 @@ export type {
   Person,
   PersonCreateRequest,
   PersonUpdateRequest,
-} from '@monobase/sdk/generated/types.gen'
+} from '@monobase/sdk-ts/generated/types.gen'
 
 // ============================================================================
 // Route Guard Functions

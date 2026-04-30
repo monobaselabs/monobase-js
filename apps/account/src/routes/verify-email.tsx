@@ -6,7 +6,7 @@ import { Alert, AlertDescription } from '@/components/alert'
 import { Mail, RefreshCw, LogOut, CheckCircle2 } from 'lucide-react'
 import { Logo } from '@/components/logo'
 import { composeGuards, requireAuth, requireNotEmailVerified } from '@/utils/guards'
-import { useAuthClient } from '@monobase/sdk/react/auth'
+import { useAuthClient } from '@monobase/sdk-ts/react/auth'
 import { toast } from 'sonner'
 
 export const Route = createFileRoute('/verify-email')({
